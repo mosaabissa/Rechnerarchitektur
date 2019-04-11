@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.Scanner; 
 public class Parser {
-//comments will be added later
+	//comments will be added later
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
@@ -20,16 +20,12 @@ public class Parser {
 			test=test.substring(0, 9);
 			if(!test.equals(empty))
 			{
-				//	index=test.substring(0, 4);
-				//	test=test.substring(5, 9);
-				//	int indexInInt=Integer.parseInt(index,16);
 				line[i]=test;
 				i++;
 			}  
 
 		}
-		//	for(int j=0;j<=5;j++)
-		//	System.out.println(line[j]);
+
 		int[] linesinINT=new int[1000];
 		for(int j=0;j<i;j++)
 		{
@@ -45,6 +41,9 @@ public class Parser {
 				System.out.println(linesinINT[j]);
 			j++;
 		}
+		
+		
 	}
 
 }
+//mosaabissa
