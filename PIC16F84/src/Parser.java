@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.Scanner; 
 public class Parser {
+
 	//comments will be added later
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
@@ -41,9 +42,59 @@ public class Parser {
 				System.out.println(linesinINT[j]);
 			j++;
 		}
+		int k=0;
+		while(linesinINT[k]!=0)
+		{
+			//first four digits
+			switch(linesinINT[k] & 15360)
+			{
+			case 12288:
+				movlw(linesinINT[k]&(~15360)); break;
+
+			default:
+				//first five digits
+				switch (linesinINT[k] & 15872) {
+				case 15360:
+					sublw(linesinINT[k] & (~15872));
+				default:
+					//first six digits
+					switch (linesinINT[k] & 16128) {
+					case 14592:
+						andlw(linesinINT[k] & (~16128));
+						break;
+					case 14336:
+						iorlw(linesinINT[k] & (~16128));
+						break;
+
+					}
+					break;
+				}
+				break;
+			}
+		}
+
+
+	}
+	private static int sublw(int i) {
+		// TODO Auto-generated method stub
+		return i;
 		
-		
+	}
+	private static int iorlw(int i) {
+		// TODO Your code goes here
+		return i;
+	}
+	public static int andlw(int i) {
+		// TODO Your code goes here
+		return i;
+
+	}
+	public static int movlw(int i)
+	{
+		// TODO Your code goes here
+		return i;
 	}
 
 }
+
 //mosaabissa
