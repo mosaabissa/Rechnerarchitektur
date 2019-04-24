@@ -13,6 +13,12 @@ public class Parser {
 		String test;
 		String index;
 		int i=0;
+		//bit masks
+		int six=16128;
+		int five=15872;
+		int four=15360;
+		int three=14336;
+		int noOp=16287;
 		while (sc.hasNextLine())  
 		{
 			//System.out.println(sc.nextLine());
@@ -35,50 +41,92 @@ public class Parser {
 			linesinINT[indexInInt]=Integer.parseInt(line[j].substring(5, 9),16);
 		}
 
-		int j=0; 
-		while(j<1000)
-		{
-			if(linesinINT[j]!=0)
-				System.out.println(linesinINT[j]);
-			j++;
-		}
+		//int j=0; 
+		//while(j<1000)
+		//{
+		//	if(linesinINT[j]!=0)
+		//		System.out.println(linesinINT[j]);
+		//	j++;
+		//}
 		int k=0;
+		//adress stack index
+		int j=0;
+		int[] adressStack= {0,0,0,0,0,0,0,0};
 		while(linesinINT[k]!=0)
 		{
-			//first four digits
-			switch(linesinINT[k] & 15360)
-			{
-			case 12288:
-				movlw(linesinINT[k]&(~15360)); break;
+			//noop code check
+			if ((linesinINT[k] & noOp)!=0) {
+				//first three digits
+				switch (linesinINT[k] & three) {
+				//call
+				case 8192:
+					adressStack[j]=k+1;
+					j++;
+					k = linesinINT[linesinINT[k]& (~three)] ; break;
+				case 10240:
+					k=k& (~three);
 
-			default:
-				//first five digits
-				switch (linesinINT[k] & 15872) {
-				case 15360:
-					sublw(linesinINT[k] & (~15872));
 				default:
-					//first six digits
-					switch (linesinINT[k] & 16128) {
-					case 14592:
-						andlw(linesinINT[k] & (~16128));
-						break;
-					case 14336:
-						iorlw(linesinINT[k] & (~16128));
+					//first four digits
+					switch (linesinINT[k] & four) {
+					case 12288:
+						movlw(linesinINT[k] & (~four));
+						k++;
 						break;
 
+					default:
+						//first five digits
+						switch (linesinINT[k] & five) {
+						case 15360:
+							sublw(linesinINT[k] & (~five));
+							k++;
+							break;
+						case 15872:
+							addlw(linesinINT[k] & (~five));
+							k++;
+							break;
+						default:
+							//first six digits
+							switch (linesinINT[k] & six) {
+							case 14592:
+								andlw(linesinINT[k] & (~six));
+								k++;
+								break;
+							case 14336:
+								iorlw(linesinINT[k] & (~six));
+								k++;
+								break;
+							case 14848:
+								xorlw(linesinINT[k] & (~six));
+								k++;
+								break;
+							default:
+								break;
+
+							}
+							break;
+						}
+						break;
 					}
 					break;
 				}
-				break;
-			}
+			}else k++;
 		}
 
+
+	}
+	private static void xorlw(int i) {
+		// TODO Auto-generated method stub
+
+	}
+	private static void addlw(int i) {
+		// TODO Auto-generated method stub
 
 	}
 	private static int sublw(int i) {
 		// TODO Auto-generated method stub
 		return i;
-		
+
 	}
 	private static int iorlw(int i) {
 		// TODO Your code goes here
