@@ -49,8 +49,9 @@ public class Parser {
 		//	j++;
 		//}
 		int k=0;
-		//adress stack index
+		//address stack index
 		int j=0;
+		int w=0;
 		int[] adressStack= {0,0,0,0,0,0,0,0};
 		while(linesinINT[k]!=0)
 		{
@@ -62,42 +63,42 @@ public class Parser {
 				case 8192:
 					adressStack[j]=k+1;
 					j++;
-					k = linesinINT[linesinINT[k]& (~three)] ; break;
+					k=k & (~three); break;
 				case 10240:
-					k=k& (~three);
+					k=k & (~three); break;
 
 				default:
 					//first four digits
 					switch (linesinINT[k] & four) {
 					case 12288:
-						movlw(linesinINT[k] & (~four));
-						k++;
+						w=movlw(linesinINT[k] & (~four));
+						k++; 
 						break;
 
 					default:
 						//first five digits
 						switch (linesinINT[k] & five) {
 						case 15360:
-							sublw(linesinINT[k] & (~five));
-							k++; 
+							w=sublw(linesinINT[k] & (~five),w);
+							k++;
 							break;
 						case 15872:
-							addlw(linesinINT[k] & (~five));
+							w=addlw(linesinINT[k] & (~five),w);
 							k++;
 							break;
 						default:
 							//first six digits
 							switch (linesinINT[k] & six) {
 							case 14592:
-								andlw(linesinINT[k] & (~six));
+								w=andlw(linesinINT[k] & (~six),w);
 								k++;
 								break;
 							case 14336:
-								iorlw(linesinINT[k] & (~six));
+								w=iorlw(linesinINT[k] & (~six),w);
 								k++;
 								break;
 							case 14848:
-								xorlw(linesinINT[k] & (~six));
+								w=xorlw(linesinINT[k] & (~six),w);
 								k++;
 								break;
 							default:
@@ -146,7 +147,7 @@ public class Parser {
 		
 		// TODO Your code goes here
 		return i;
-	}
+}
 
 }
 
