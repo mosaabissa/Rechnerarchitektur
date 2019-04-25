@@ -140,10 +140,12 @@ public class Parser {
 		// TODO Your code goes here
 
 	}
-	public static int movlw(int w)
-	{
+	public static int movlw(int i){
+		i=i& 0b11111111;
+
+		
 		// TODO Your code goes here
-		return w;
+		return i;
 	}
 
 }
