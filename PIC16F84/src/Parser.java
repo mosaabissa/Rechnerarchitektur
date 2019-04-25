@@ -79,7 +79,7 @@ public class Parser {
 						switch (linesinINT[k] & five) {
 						case 15360:
 							sublw(linesinINT[k] & (~five));
-							k++;
+							k++; 
 							break;
 						case 15872:
 							addlw(linesinINT[k] & (~five));
@@ -115,32 +115,35 @@ public class Parser {
 
 
 	}
-	private static void xorlw(int i) {
+	private static int xorlw(int i, int w) {
+		return i^w;
+		
+	}
+	private static int addlw(int i, int w) {
+		i=i& 0b11111111;
+		return i+w;
 		// TODO Auto-generated method stub
 
 	}
-	private static void addlw(int i) {
+	private static int sublw(int i, int w) {
+		i=i& 0b11111111;
+		return i-w;
 		// TODO Auto-generated method stub
-
 	}
-	private static int sublw(int i) {
-		// TODO Auto-generated method stub
-		return i;
-
-	}
-	private static int iorlw(int i) {
+	private static int iorlw(int i, int w) {
+		return i|w;		
 		// TODO Your code goes here
-		return i;
-	}
-	public static int andlw(int i) {
-		// TODO Your code goes here
-		return i;
 
 	}
-	public static int movlw(int i)
+	public static int andlw(int i, int w) {
+		return i&w;
+		// TODO Your code goes here
+
+	}
+	public static int movlw(int w)
 	{
 		// TODO Your code goes here
-		return i;
+		return w;
 	}
 
 }
