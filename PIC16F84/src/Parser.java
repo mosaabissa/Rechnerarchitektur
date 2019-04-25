@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("E:\\\\RechnerArch\\\\PIC16F84\\\\src\\\\TPicSim101.LST"); 
+		File file = new File("E:\\\\TPicSim2.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -14,11 +14,12 @@ public class Parser {
 		String index;
 		int i=0;
 		//bit masks
+		
 		int six=16128;
 		int five=15872;
 		int four=15360;
 		int three=14336;
-		int noOp=16287;
+		int noOp=0b0000;
 		while (sc.hasNextLine())  
 		{
 			//System.out.println(sc.nextLine());
@@ -52,27 +53,39 @@ public class Parser {
 		//address stack index
 		int j=0;
 		int w=0;
-		int[] adressStack= {0,0,0,0,0,0,0,0};
-		while(linesinINT[k]!=0)
+		int[] adressStack= new int[8];
+		while(0==0)
 		{
 			//noop code check
-			if ((linesinINT[k] & noOp)!=0) {
+			if (linesinINT[k] !=0) {
 				//first three digits
 				switch (linesinINT[k] & three) {
 				//call
 				case 8192:
 					adressStack[j]=k+1;
 					j++;
-					k=k & (~three); break;
+					k=linesinINT[k] & (~three);
+					System.out.println(w);
+					break;
 				case 10240:
-					k=k & (~three); break;
+					k=k & (~three);
+					//System.out.println(w);
+					break;
 
 				default:
 					//first four digits
 					switch (linesinINT[k] & four) {
 					case 12288:
 						w=movlw(linesinINT[k] & (~four));
-						k++; 
+						k++;
+						System.out.println(w);
+						break;
+						//returnlw
+					case 0b11010000000000:
+						w=linesinINT[k] & (~six);
+						k=adressStack[j-1];
+						j--;
+						System.out.println(w);
 						break;
 
 					default:
@@ -81,10 +94,12 @@ public class Parser {
 						case 15360:
 							w=sublw(linesinINT[k] & (~five),w);
 							k++;
+							System.out.println(w);
 							break;
 						case 15872:
 							w=addlw(linesinINT[k] & (~five),w);
 							k++;
+							System.out.println(w);
 							break;
 						default:
 							//first six digits
@@ -92,16 +107,29 @@ public class Parser {
 							case 14592:
 								w=andlw(linesinINT[k] & (~six),w);
 								k++;
+								System.out.println(w);
 								break;
 							case 14336:
 								w=iorlw(linesinINT[k] & (~six),w);
 								k++;
+								System.out.println(w);
 								break;
 							case 14848:
 								w=xorlw(linesinINT[k] & (~six),w);
 								k++;
+								System.out.println(w);
 								break;
 							default:
+								switch(linesinINT[k])
+								{
+								//return
+								case 0x0008:
+									k=adressStack[j-1];
+									j--;
+									System.out.println(w);
+									break;
+								default:break;
+								}
 								break;
 
 							}
@@ -111,7 +139,9 @@ public class Parser {
 					}
 					break;
 				}
-			}else k++;
+			}else { k++;
+			System.out.println(w);
+			}
 		}
 
 
