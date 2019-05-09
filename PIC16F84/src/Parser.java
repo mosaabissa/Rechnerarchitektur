@@ -270,20 +270,46 @@ public class Parser {
 					//rlf
 
 					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=rlf(Register[programLines[programCounter] & (~seven)]);
+						//Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
+						testLine=c;
+					testLine2=Register[programLines[programCounter] & (~seven)];
+					if(testLine2>=128)
+						c=1;
+					testLine2=testLine2<<1;
+					
+					if(testLine==1)
+						testLine2=testLine2+1;
+					
+					
+					if ((programLines[programCounter] & (~six)) > 127)
+						Register[programLines[programCounter]
+								& (~seven)] = testLine2;
 
 					else
-						w=rlf(Register[programLines[programCounter] & (~seven)]);
+						w = testLine2;
 					programCounter++;
 					break;
 				case 3072:
 					//rrf
 
 					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
+						//Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
+						testLine=c;
+					testLine2=Register[programLines[programCounter] & (~seven)];
+					if(testLine2%2==1)
+						c=1;
+					testLine2=testLine2>>1;
+					
+					if(testLine==1)
+						testLine2=testLine2+0x80;
+					
+					
+					if ((programLines[programCounter] & (~six)) > 127)
+						Register[programLines[programCounter]
+								& (~seven)] = testLine2;
 
 					else
-						w=rrf(Register[programLines[programCounter] & (~seven)]);
+						w = testLine2;
 					programCounter++;
 					break;
 				case 2816:
@@ -385,14 +411,7 @@ public class Parser {
 		f = f | (1 << b); 
 		return f;
 	}
-	private static int rrf(int i) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	private static int rlf(int i) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
 	private static int swapf(int i) {
 		// TODO Auto-generated method stub
 		return 0;
