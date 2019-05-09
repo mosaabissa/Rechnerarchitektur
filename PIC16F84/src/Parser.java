@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("F:\\\\TPicSim2.LST"); 
+		File file = new File("E:\\\\TPicSim3.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -127,6 +127,8 @@ public class Parser {
 			else
 				programCounter++;
 
+			System.out.println(w);
+
 			break;
 
 		case 0x1c00:
@@ -139,6 +141,8 @@ public class Parser {
 				programCounter=programCounter+2;
 			else
 				programCounter++;
+
+			System.out.println(w);
 
 			break;
 
@@ -181,6 +185,8 @@ public class Parser {
 					else
 						w=Register[programLines[programCounter] & (~seven)]+w;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 1280:
 					//andwf
@@ -190,33 +196,56 @@ public class Parser {
 					else
 						w=Register[programLines[programCounter] & (~seven)]&w;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 2304:
 					//comf
 					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=~Register[programLines[programCounter] & (~seven)];
+						Register[programLines[programCounter] & (~seven)]=(~Register[programLines[programCounter] & (~seven)])&0xff;
 
 					else
-						w=~Register[programLines[programCounter] & (~seven)];
+						w=(~Register[programLines[programCounter] & (~seven)])&0xff;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 768:
 					//decf
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
+					if(Register[programLines[programCounter] & (~seven)]-1>=0)
+					{
+						if((programLines[programCounter] & (~six))>127)
+							Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
 
+						else
+							w=Register[programLines[programCounter] & (~seven)]-1;
+					}
+					else if((programLines[programCounter] & (~six))<=127)
+						w=0xff;
 					else
-						w=Register[programLines[programCounter] & (~seven)]-1;
+						Register[programLines[programCounter] & (~seven)]=0xff;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 2560:
 					//incf
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]+1;
+					if (Register[programLines[programCounter]
+							& (~seven)]+1 > 0xff) {
 
+						if ((programLines[programCounter] & (~six)) > 127)
+							Register[programLines[programCounter]
+									& (~seven)] = Register[programLines[programCounter] & (~seven)] + 1;
+
+						else
+							w = Register[programLines[programCounter] & (~seven)] + 1;
+					}else if((programLines[programCounter] & (~six))<=127)
+						w=0;
 					else
-						w=Register[programLines[programCounter] & (~seven)]+1;
+						Register[programLines[programCounter] & (~seven)]=0;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 2048:
 					//movf
@@ -226,6 +255,8 @@ public class Parser {
 					else
 						w=Register[programLines[programCounter] & (~seven)];
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 1024:
 					//iorwf
@@ -235,16 +266,36 @@ public class Parser {
 					else
 						w=Register[programLines[programCounter] & (~seven)] | w;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 512:
-					//subwf
-					//TODO make sure normal subtraction is ok
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)] - w;
+					 {
+						//subwf
+						//TODO make sure normal subtraction is ok
+						/*
+						 * if(Register[programLines[programCounter] & (~seven)]-1>=0)
+						{
+							if((programLines[programCounter] & (~six))>127)
+								Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
+						
+							else
+								w=Register[programLines[programCounter] & (~seven)]-1;
+						}
+						else if((programLines[programCounter] & (~six))<=127)
+							w=0xff;
+						else
+							Register[programLines[programCounter] & (~seven)]=0xff;*/
+						if ((programLines[programCounter] & (~six)) > 127)
+							Register[programLines[programCounter]
+									& (~seven)] = (Register[programLines[programCounter] & (~seven)] - w)&0xff;
 
-					else
-						w=Register[programLines[programCounter] & (~seven)] - w;
+						else
+							w = (Register[programLines[programCounter] & (~seven)] - w)&0xff;
+					}
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 3584:
 					//swapf
@@ -255,6 +306,8 @@ public class Parser {
 					else
 						w=swapf(Register[programLines[programCounter] & (~seven)]);
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 1536:
 					//xorwf
@@ -265,6 +318,8 @@ public class Parser {
 					else
 						w=Register[programLines[programCounter] & (~seven)]^w;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 3328:
 					//rlf
@@ -276,11 +331,11 @@ public class Parser {
 					if(testLine2>=128)
 						c=1;
 					testLine2=testLine2<<1;
-					
+
 					if(testLine==1)
 						testLine2=testLine2+1;
-					
-					
+
+
 					if ((programLines[programCounter] & (~six)) > 127)
 						Register[programLines[programCounter]
 								& (~seven)] = testLine2;
@@ -288,6 +343,8 @@ public class Parser {
 					else
 						w = testLine2;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 3072:
 					//rrf
@@ -299,11 +356,11 @@ public class Parser {
 					if(testLine2%2==1)
 						c=1;
 					testLine2=testLine2>>1;
-					
+
 					if(testLine==1)
 						testLine2=testLine2+0x80;
-					
-					
+
+
 					if ((programLines[programCounter] & (~six)) > 127)
 						Register[programLines[programCounter]
 								& (~seven)] = testLine2;
@@ -311,6 +368,8 @@ public class Parser {
 					else
 						w = testLine2;
 					programCounter++;
+
+					System.out.println(w);
 					break;
 				case 2816:
 					//decfsz
@@ -330,6 +389,8 @@ public class Parser {
 						programCounter++;
 					else
 						programCounter=programCounter+2;
+
+					System.out.println(w);
 
 					break;
 				case 3840:
@@ -352,6 +413,8 @@ public class Parser {
 					else
 						programCounter=programCounter+2;
 
+					System.out.println(w);
+
 					break;
 				default:
 					switch (programLines[programCounter] & seven) {
@@ -359,18 +422,21 @@ public class Parser {
 					case 128:
 						Register[programLines[programCounter] & (~seven)]=w;
 						programCounter++;
+						System.out.println(w);
 						break;
 
 					case 384:
 						//clrf
 						Register[programLines[programCounter] & (~seven)]=0;
 						programCounter++;
+						System.out.println(w);
 						break;
 					case 256:
 						//clrw
 						w=0;
 						z=1;
 						programCounter++;
+						System.out.println(w);
 						break;
 					default:
 						switch (programLines[programCounter]) {
@@ -414,7 +480,12 @@ public class Parser {
 
 	private static int swapf(int i) {
 		// TODO Auto-generated method stub
-		return 0;
+		int left=i&0xf0;
+		int right=i&0x0f;
+		right=right<<4;
+		left=left>>4;
+
+		return left+right;
 	}
 	private static int xorlw(int i, int w) {
 		return i^w;
