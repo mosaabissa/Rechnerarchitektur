@@ -63,6 +63,8 @@ public class Parser {
 		int j=0;
 		int w=0;
 		int[] adressStack= new int[8];
+		int testLine=0;
+		int testLine2=0;
 		//TODO implement flags
 		while(0==0)
 		{
@@ -97,224 +99,271 @@ public class Parser {
 						j--;
 						System.out.println(w);
 						break;
+					case 0x1400:
+						//bsf
+						int b = programLines[programCounter]&0x0380;
+						b=b>>7;
+		Register[programLines[programCounter]&(~seven)]=bsf(Register[programLines[programCounter]&(~seven)],b);
+		System.out.println(w);
+		programCounter++;
+		break;
+		case 0x1000:
+			//bcf
+			testLine = programLines[programCounter]&0x0380;
+			testLine=testLine>>7;
+			Register[programLines[programCounter]&(~seven)]=bcf(Register[programLines[programCounter]&(~seven)],testLine);
+			System.out.println(w);
+			programCounter++;
+			break;
 
+		case 0x1800:
+			//btfsc
+			testLine = programLines[programCounter]&0x0380;
+			testLine=testLine>>7;
+			testLine2= Register[programLines[programCounter]&(~seven)];
+			testLine2=testLine2>>testLine;
+			if(testLine2%2==0)
+				programCounter=programCounter+2;
+			else
+				programCounter++;
+
+			break;
+
+		case 0x1c00:
+			//btfss
+			testLine = programLines[programCounter]&0x0380;
+			testLine=testLine>>7;
+			testLine2= Register[programLines[programCounter]&(~seven)];
+			testLine2=testLine2>>testLine;
+			if(testLine2%2==1)
+				programCounter=programCounter+2;
+			else
+				programCounter++;
+
+			break;
+
+		default:
+			//first five digits
+			switch (programLines[programCounter] & five) {
+			case 15360:
+				w=sublw(programLines[programCounter] & (~five),w);
+				programCounter++;
+				System.out.println(w);
+				break;
+			case 15872:
+				w=addlw(programLines[programCounter] & (~five),w);
+				programCounter++;
+				System.out.println(w);
+				break;
+			default:
+				//first six digits
+				switch (programLines[programCounter] & six) {
+				case 14592:
+					w=andlw(programLines[programCounter] & (~six),w);
+					programCounter++;
+					System.out.println(w);
+					break;
+				case 14336:
+					w=iorlw(programLines[programCounter] & (~six),w);
+					programCounter++;
+					System.out.println(w);
+					break;
+				case 14848:
+					w=xorlw(programLines[programCounter] & (~six),w);
+					programCounter++;
+					System.out.println(w);
+					break;
+				case 1792:
+					//addwf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]+w;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)]+w;
+					programCounter++;
+					break;
+				case 1280:
+					//andwf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]&w;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)]&w;
+					programCounter++;
+					break;
+				case 2304:
+					//comf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=~Register[programLines[programCounter] & (~seven)];
+
+					else
+						w=~Register[programLines[programCounter] & (~seven)];
+					programCounter++;
+					break;
+				case 768:
+					//decf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)]-1;
+					programCounter++;
+					break;
+				case 2560:
+					//incf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]+1;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)]+1;
+					programCounter++;
+					break;
+				case 2048:
+					//movf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)];
+
+					else
+						w=Register[programLines[programCounter] & (~seven)];
+					programCounter++;
+					break;
+				case 1024:
+					//iorwf
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)] | w;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)] | w;
+					programCounter++;
+					break;
+				case 512:
+					//subwf
+					//TODO make sure normal subtraction is ok
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)] - w;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)] - w;
+					programCounter++;
+					break;
+				case 3584:
+					//swapf
+
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=swapf(Register[programLines[programCounter] & (~seven)]);
+
+					else
+						w=swapf(Register[programLines[programCounter] & (~seven)]);
+					programCounter++;
+					break;
+				case 1536:
+					//xorwf
+
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]^w;
+
+					else
+						w=Register[programLines[programCounter] & (~seven)]^w;
+					programCounter++;
+					break;
+				case 3328:
+					//rlf
+
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=rlf(Register[programLines[programCounter] & (~seven)]);
+
+					else
+						w=rlf(Register[programLines[programCounter] & (~seven)]);
+					programCounter++;
+					break;
+				case 3072:
+					//rrf
+
+					if((programLines[programCounter] & (~six))>127)
+						Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
+
+					else
+						w=rrf(Register[programLines[programCounter] & (~seven)]);
+					programCounter++;
+					break;
+				case 2816:
+					//decfsz
+					int testRegister=Register[programLines[programCounter]
+							& (~seven)];
+
+
+
+					if ((programLines[programCounter] & (~six)) > 127)
+						Register[programLines[programCounter]
+								& (~seven)] = Register[programLines[programCounter] & (~seven)] - 1;
+
+					else
+						w = Register[programLines[programCounter] & (~seven)] - 1;
+
+					if (testRegister-1!=0) 
+						programCounter++;
+					else
+						programCounter=programCounter+2;
+
+					break;
+				case 3840:
+					//incfsz
+					int testRegister2=Register[programLines[programCounter]
+							& (~seven)];
+
+
+
+
+					if ((programLines[programCounter] & (~six)) > 127)
+						Register[programLines[programCounter]
+								& (~seven)] = Register[programLines[programCounter] & (~seven)] + 1;
+
+					else
+						w = Register[programLines[programCounter] & (~seven)] + 1;
+
+					if (testRegister2+1!=0) 
+						programCounter++;
+					else
+						programCounter=programCounter+2;
+
+					break;
+				default:
+					switch (programLines[programCounter] & seven) {
+					//movwf
+					case 128:
+						Register[programLines[programCounter] & (~seven)]=w;
+						programCounter++;
+						break;
+
+					case 384:
+						//clrf
+						Register[programLines[programCounter] & (~seven)]=0;
+						programCounter++;
+						break;
+					case 256:
+						//clrw
+						w=0;
+						z=1;
+						programCounter++;
+						break;
 					default:
-						//first five digits
-						switch (programLines[programCounter] & five) {
-						case 15360:
-							w=sublw(programLines[programCounter] & (~five),w);
-							programCounter++;
-							System.out.println(w);
-							break;
-						case 15872:
-							w=addlw(programLines[programCounter] & (~five),w);
-							programCounter++;
+						switch (programLines[programCounter]) {
+						//return
+						case 0x0008:
+							programCounter = adressStack[j - 1];
+							j--;
 							System.out.println(w);
 							break;
 						default:
-							//first six digits
-							switch (programLines[programCounter] & six) {
-							case 14592:
-								w=andlw(programLines[programCounter] & (~six),w);
-								programCounter++;
-								System.out.println(w);
-								break;
-							case 14336:
-								w=iorlw(programLines[programCounter] & (~six),w);
-								programCounter++;
-								System.out.println(w);
-								break;
-							case 14848:
-								w=xorlw(programLines[programCounter] & (~six),w);
-								programCounter++;
-								System.out.println(w);
-								break;
-							case 1792:
-								//addwf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]+w;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)]+w;
-								programCounter++;
-								break;
-							case 1280:
-								//andwf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]&w;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)]&w;
-								programCounter++;
-								break;
-							case 2304:
-								//comf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=~Register[programLines[programCounter] & (~seven)];
-
-								else
-									w=~Register[programLines[programCounter] & (~seven)];
-								programCounter++;
-								break;
-							case 768:
-								//decf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)]-1;
-								programCounter++;
-								break;
-							case 2560:
-								//incf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]+1;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)]+1;
-								programCounter++;
-								break;
-							case 2048:
-								//movf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)];
-
-								else
-									w=Register[programLines[programCounter] & (~seven)];
-								programCounter++;
-								break;
-							case 1024:
-								//iorwf
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)] | w;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)] | w;
-								programCounter++;
-								break;
-							case 512:
-								//subwf
-								//TODO make sure normal subtraction is ok
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)] - w;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)] - w;
-								programCounter++;
-								break;
-							case 3584:
-								//swapf
-
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=swapf(Register[programLines[programCounter] & (~seven)]);
-
-								else
-									w=swapf(Register[programLines[programCounter] & (~seven)]);
-								programCounter++;
-								break;
-							case 1536:
-								//xorwf
-
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]^w;
-
-								else
-									w=Register[programLines[programCounter] & (~seven)]^w;
-								programCounter++;
-								break;
-							case 3328:
-								//rlf
-
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=rlf(Register[programLines[programCounter] & (~seven)]);
-
-								else
-									w=rlf(Register[programLines[programCounter] & (~seven)]);
-								programCounter++;
-								break;
-							case 3072:
-								//rrf
-
-								if((programLines[programCounter] & (~six))>127)
-									Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
-
-								else
-									w=rrf(Register[programLines[programCounter] & (~seven)]);
-								programCounter++;
-								break;
-							case 2816:
-								//decfsz
-								
-								if (Register[programLines[programCounter]
-										& (~seven)]-1!=0) 
-								programCounter++;
-								else
-									programCounter=programCounter+2;
-
-								
-									if ((programLines[programCounter] & (~six)) > 127)
-										Register[programLines[programCounter]
-												& (~seven)] = Register[programLines[programCounter] & (~seven)] - 1;
-
-									else
-										w = Register[programLines[programCounter] & (~seven)] - 1;
-									
-								break;
-							case 3840:
-								//incfsz
-								
-								if (Register[programLines[programCounter]
-										& (~seven)]+1!=0) 
-								programCounter++;
-								else
-									programCounter=programCounter+2;
-
-								
-									if ((programLines[programCounter] & (~six)) > 127)
-										Register[programLines[programCounter]
-												& (~seven)] = Register[programLines[programCounter] & (~seven)] + 1;
-
-									else
-										w = Register[programLines[programCounter] & (~seven)] + 1;
-									
-								break;
-							default:
-								switch (programLines[programCounter] & seven) {
-								//movwf
-								case 128:
-									Register[programLines[programCounter] & (~seven)]=w;
-									programCounter++;
-									break;
-
-								case 384:
-									//clrf
-									Register[programLines[programCounter] & (~seven)]=0;
-									programCounter++;
-									break;
-								case 256:
-									//clrw
-									w=0;
-									z=1;
-									programCounter++;
-									break;
-								default:
-									switch (programLines[programCounter]) {
-									//return
-									case 0x0008:
-										programCounter = adressStack[j - 1];
-										j--;
-										System.out.println(w);
-										break;
-									default:
-										break;
-									}break;
-								}
-								break;
-
-							}
 							break;
-						}
-						break;
+						}break;
+					}
+					break;
+
+				}
+				break;
+			}
+			break;
 					}
 					break;
 				}
@@ -324,6 +373,17 @@ public class Parser {
 		}
 
 
+	}
+	//bsf(Register[programLines[programCounter]&(~seven)],b)
+	private static int bcf(int f, int b) {
+		// TODO Auto-generated method stub
+		f = f & ~(1 << b);
+		return f;
+	}
+	private static int bsf(int f, int b) {
+		// TODO Auto-generated method stub
+		f = f | (1 << b); 
+		return f;
 	}
 	private static int rrf(int i) {
 		// TODO Auto-generated method stub
