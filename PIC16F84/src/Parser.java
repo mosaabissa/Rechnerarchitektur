@@ -190,6 +190,12 @@ public class Parser {
 					break;
 				case 1280:
 					//andwf
+				
+					if ((Register[programLines[programCounter] & (~seven)]&w)==0)
+						z=1;
+					else
+						z=0;
+						
 					if((programLines[programCounter] & (~six))>127)
 						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]&w;
 
