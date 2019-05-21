@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("E:\\\\TPicSim3.LST"); 
+		File file = new File("F:\\\\TPicSim1.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -28,6 +28,10 @@ public class Parser {
 		int Register[]=new int[128];
 		for(i=0;i<128;i++)
 			Register[i]=0;
+		int Register2[]=new int[128];
+		for(i=0;i<128;i++)
+			Register2[i]=0;
+		int registerBank=0;
 		i=0;
 		while (sc.hasNextLine())  
 		{
@@ -66,17 +70,19 @@ public class Parser {
 		int testLine=0;
 		int testLine2=0;
 		//TODO implement flags
+		int currentLine=programLines[programCounter];
 		while(0==0)
 		{
+			currentLine=programLines[programCounter];
 			//noop code check
-			if (programLines[programCounter] !=0) {
+			if (currentLine !=0) {
 				//first three digits
-				switch (programLines[programCounter] & three) {
+				switch (currentLine & three) {
 				//call
 				case 8192:
 					adressStack[j]=programCounter+1;
 					j++;
-					programCounter=programLines[programCounter] & (~three);
+					programCounter=currentLine & (~three);
 					System.out.println(w);
 					break;
 				case 10240:
@@ -86,41 +92,41 @@ public class Parser {
 
 				default:
 					//first four digits
-					switch (programLines[programCounter] & four) {
+					switch (currentLine & four) {
 					case 12288:
-						w=movlw(programLines[programCounter] & (~four));
+						w=movlw(currentLine & (~four));
 						programCounter++;
 						System.out.println(w);
 						break;
 						//returnlw
 					case 0b11010000000000:
-						w=programLines[programCounter] & (~six);
+						w=currentLine & (~six);
 						programCounter=adressStack[j-1];
 						j--;
 						System.out.println(w);
 						break;
 					case 0x1400:
 						//bsf
-						int b = programLines[programCounter]&0x0380;
+						int b = currentLine&0x0380;
 						b=b>>7;
-		Register[programLines[programCounter]&(~seven)]=bsf(Register[programLines[programCounter]&(~seven)],b);
+		Register[currentLine&(~seven)]=bsf(Register[currentLine&(~seven)],b);
 		System.out.println(w);
 		programCounter++;
 		break;
 		case 0x1000:
 			//bcf
-			testLine = programLines[programCounter]&0x0380;
+			testLine = currentLine&0x0380;
 			testLine=testLine>>7;
-			Register[programLines[programCounter]&(~seven)]=bcf(Register[programLines[programCounter]&(~seven)],testLine);
+			Register[currentLine&(~seven)]=bcf(Register[currentLine&(~seven)],testLine);
 			System.out.println(w);
 			programCounter++;
 			break;
 
 		case 0x1800:
 			//btfsc
-			testLine = programLines[programCounter]&0x0380;
+			testLine = currentLine&0x0380;
 			testLine=testLine>>7;
-			testLine2= Register[programLines[programCounter]&(~seven)];
+			testLine2= Register[currentLine&(~seven)];
 			testLine2=testLine2>>testLine;
 			if(testLine2%2==0)
 				programCounter=programCounter+2;
@@ -133,9 +139,9 @@ public class Parser {
 
 		case 0x1c00:
 			//btfss
-			testLine = programLines[programCounter]&0x0380;
+			testLine = currentLine&0x0380;
 			testLine=testLine>>7;
-			testLine2= Register[programLines[programCounter]&(~seven)];
+			testLine2= Register[currentLine&(~seven)];
 			testLine2=testLine2>>testLine;
 			if(testLine2%2==1)
 				programCounter=programCounter+2;
@@ -148,42 +154,46 @@ public class Parser {
 
 		default:
 			//first five digits
-			switch (programLines[programCounter] & five) {
+			switch (currentLine & five) {
 			case 15360:
-				w=sublw(programLines[programCounter] & (~five),w);
+				w=sublw(currentLine & (~five),w);
 				programCounter++;
 				System.out.println(w);
 				break;
 			case 15872:
-				w=addlw(programLines[programCounter] & (~five),w);
+				w=addlw(currentLine & (~five),w);
 				programCounter++;
 				System.out.println(w);
 				break;
 			default:
 				//first six digits
-				switch (programLines[programCounter] & six) {
+				switch (currentLine & six) {
 				case 14592:
-					w=andlw(programLines[programCounter] & (~six),w);
+					w=andlw(currentLine & (~six),w);
 					programCounter++;
 					System.out.println(w);
 					break;
 				case 14336:
-					w=iorlw(programLines[programCounter] & (~six),w);
+					w=iorlw(currentLine & (~six),w);
 					programCounter++;
 					System.out.println(w);
 					break;
 				case 14848:
-					w=xorlw(programLines[programCounter] & (~six),w);
+					w=xorlw(currentLine & (~six),w);
 					programCounter++;
 					System.out.println(w);
 					break;
 				case 1792:
 					//addwf
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]+w;
+					testLine=Register[currentLine & (~seven)]+w;
+					if (testLine>255)
+						testLine=testLine-255;
+					
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=testLine;
 
 					else
-						w=Register[programLines[programCounter] & (~seven)]+w;
+						w=testLine;
 					programCounter++;
 
 					System.out.println(w);
@@ -191,86 +201,86 @@ public class Parser {
 				case 1280:
 					//andwf
 				
-					if ((Register[programLines[programCounter] & (~seven)]&w)==0)
+					if ((Register[currentLine & (~seven)]&w)==0)
 						z=1;
 					else
 						z=0;
 						
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]&w;
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=Register[currentLine & (~seven)]&w;
 
 					else
-						w=Register[programLines[programCounter] & (~seven)]&w;
+						w=Register[currentLine & (~seven)]&w;
 					programCounter++;
 
 					System.out.println(w);
 					break;
 				case 2304:
 					//comf
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=(~Register[programLines[programCounter] & (~seven)])&0xff;
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=(~Register[currentLine & (~seven)])&0xff;
 
 					else
-						w=(~Register[programLines[programCounter] & (~seven)])&0xff;
+						w=(~Register[currentLine & (~seven)])&0xff;
 					programCounter++;
 
 					System.out.println(w);
 					break;
 				case 768:
 					//decf
-					if(Register[programLines[programCounter] & (~seven)]-1>=0)
+					if(Register[currentLine & (~seven)]-1>=0)
 					{
-						if((programLines[programCounter] & (~six))>127)
-							Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
+						if((currentLine & (~six))>127)
+							Register[currentLine & (~seven)]=Register[currentLine & (~seven)]-1;
 
 						else
-							w=Register[programLines[programCounter] & (~seven)]-1;
+							w=Register[currentLine & (~seven)]-1;
 					}
-					else if((programLines[programCounter] & (~six))<=127)
+					else if((currentLine & (~six))<=127)
 						w=0xff;
 					else
-						Register[programLines[programCounter] & (~seven)]=0xff;
+						Register[currentLine & (~seven)]=0xff;
 					programCounter++;
 
 					System.out.println(w);
 					break;
 				case 2560:
 					//incf
-					if (Register[programLines[programCounter]
+					if (Register[currentLine
 							& (~seven)]+1 > 0xff) {
 
-						if ((programLines[programCounter] & (~six)) > 127)
-							Register[programLines[programCounter]
-									& (~seven)] = Register[programLines[programCounter] & (~seven)] + 1;
+						if ((currentLine & (~six)) > 127)
+							Register[currentLine
+									& (~seven)] = Register[currentLine & (~seven)] + 1;
 
 						else
-							w = Register[programLines[programCounter] & (~seven)] + 1;
-					}else if((programLines[programCounter] & (~six))<=127)
+							w = Register[currentLine & (~seven)] + 1;
+					}else if((currentLine & (~six))<=127)
 						w=0;
 					else
-						Register[programLines[programCounter] & (~seven)]=0;
+						Register[currentLine & (~seven)]=0;
 					programCounter++;
 
 					System.out.println(w);
 					break;
 				case 2048:
 					//movf
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)];
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=Register[currentLine & (~seven)];
 
 					else
-						w=Register[programLines[programCounter] & (~seven)];
+						w=Register[currentLine & (~seven)];
 					programCounter++;
 
 					System.out.println(w);
 					break;
 				case 1024:
 					//iorwf
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)] | w;
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=Register[currentLine & (~seven)] | w;
 
 					else
-						w=Register[programLines[programCounter] & (~seven)] | w;
+						w=Register[currentLine & (~seven)] | w;
 					programCounter++;
 
 					System.out.println(w);
@@ -280,24 +290,24 @@ public class Parser {
 						//subwf
 						//TODO make sure normal subtraction is ok
 						/*
-						 * if(Register[programLines[programCounter] & (~seven)]-1>=0)
+						 * if(Register[currentLine & (~seven)]-1>=0)
 						{
-							if((programLines[programCounter] & (~six))>127)
-								Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]-1;
+							if((currentLine & (~six))>127)
+								Register[currentLine & (~seven)]=Register[currentLine & (~seven)]-1;
 						
 							else
-								w=Register[programLines[programCounter] & (~seven)]-1;
+								w=Register[currentLine & (~seven)]-1;
 						}
-						else if((programLines[programCounter] & (~six))<=127)
+						else if((currentLine & (~six))<=127)
 							w=0xff;
 						else
-							Register[programLines[programCounter] & (~seven)]=0xff;*/
-						if ((programLines[programCounter] & (~six)) > 127)
-							Register[programLines[programCounter]
-									& (~seven)] = (Register[programLines[programCounter] & (~seven)] - w)&0xff;
+							Register[currentLine & (~seven)]=0xff;*/
+						if ((currentLine & (~six)) > 127)
+							Register[currentLine
+									& (~seven)] = (Register[currentLine & (~seven)] - w)&0xff;
 
 						else
-							w = (Register[programLines[programCounter] & (~seven)] - w)&0xff;
+							w = (Register[currentLine & (~seven)] - w)&0xff;
 					}
 					programCounter++;
 
@@ -306,11 +316,11 @@ public class Parser {
 				case 3584:
 					//swapf
 
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=swapf(Register[programLines[programCounter] & (~seven)]);
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=swapf(Register[currentLine & (~seven)]);
 
 					else
-						w=swapf(Register[programLines[programCounter] & (~seven)]);
+						w=swapf(Register[currentLine & (~seven)]);
 					programCounter++;
 
 					System.out.println(w);
@@ -318,11 +328,11 @@ public class Parser {
 				case 1536:
 					//xorwf
 
-					if((programLines[programCounter] & (~six))>127)
-						Register[programLines[programCounter] & (~seven)]=Register[programLines[programCounter] & (~seven)]^w;
+					if((currentLine & (~six))>127)
+						Register[currentLine & (~seven)]=Register[currentLine & (~seven)]^w;
 
 					else
-						w=Register[programLines[programCounter] & (~seven)]^w;
+						w=Register[currentLine & (~seven)]^w;
 					programCounter++;
 
 					System.out.println(w);
@@ -330,10 +340,10 @@ public class Parser {
 				case 3328:
 					//rlf
 
-					if((programLines[programCounter] & (~six))>127)
-						//Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
+					if((currentLine & (~six))>127)
+						//Register[currentLine & (~seven)]=rrf(Register[currentLine & (~seven)]);
 						testLine=c;
-					testLine2=Register[programLines[programCounter] & (~seven)];
+					testLine2=Register[currentLine & (~seven)];
 					if(testLine2>=128)
 						c=1;
 					testLine2=testLine2<<1;
@@ -342,8 +352,8 @@ public class Parser {
 						testLine2=testLine2+1;
 
 
-					if ((programLines[programCounter] & (~six)) > 127)
-						Register[programLines[programCounter]
+					if ((currentLine & (~six)) > 127)
+						Register[currentLine
 								& (~seven)] = testLine2;
 
 					else
@@ -355,10 +365,10 @@ public class Parser {
 				case 3072:
 					//rrf
 
-					if((programLines[programCounter] & (~six))>127)
-						//Register[programLines[programCounter] & (~seven)]=rrf(Register[programLines[programCounter] & (~seven)]);
+					if((currentLine & (~six))>127)
+						//Register[currentLine & (~seven)]=rrf(Register[currentLine & (~seven)]);
 						testLine=c;
-					testLine2=Register[programLines[programCounter] & (~seven)];
+					testLine2=Register[currentLine & (~seven)];
 					if(testLine2%2==1)
 						c=1;
 					testLine2=testLine2>>1;
@@ -367,8 +377,8 @@ public class Parser {
 						testLine2=testLine2+0x80;
 
 
-					if ((programLines[programCounter] & (~six)) > 127)
-						Register[programLines[programCounter]
+					if ((currentLine & (~six)) > 127)
+						Register[currentLine
 								& (~seven)] = testLine2;
 
 					else
@@ -379,17 +389,17 @@ public class Parser {
 					break;
 				case 2816:
 					//decfsz
-					int testRegister=Register[programLines[programCounter]
+					int testRegister=Register[currentLine
 							& (~seven)];
 
 
 
-					if ((programLines[programCounter] & (~six)) > 127)
-						Register[programLines[programCounter]
-								& (~seven)] = Register[programLines[programCounter] & (~seven)] - 1;
+					if ((currentLine & (~six)) > 127)
+						Register[currentLine
+								& (~seven)] = Register[currentLine & (~seven)] - 1;
 
 					else
-						w = Register[programLines[programCounter] & (~seven)] - 1;
+						w = Register[currentLine & (~seven)] - 1;
 
 					if (testRegister-1!=0) 
 						programCounter++;
@@ -401,18 +411,18 @@ public class Parser {
 					break;
 				case 3840:
 					//incfsz
-					int testRegister2=Register[programLines[programCounter]
+					int testRegister2=Register[currentLine
 							& (~seven)];
 
 
 
 
-					if ((programLines[programCounter] & (~six)) > 127)
-						Register[programLines[programCounter]
-								& (~seven)] = Register[programLines[programCounter] & (~seven)] + 1;
+					if ((currentLine & (~six)) > 127)
+						Register[currentLine
+								& (~seven)] = Register[currentLine & (~seven)] + 1;
 
 					else
-						w = Register[programLines[programCounter] & (~seven)] + 1;
+						w = Register[currentLine & (~seven)] + 1;
 
 					if (testRegister2+1!=0) 
 						programCounter++;
@@ -423,17 +433,17 @@ public class Parser {
 
 					break;
 				default:
-					switch (programLines[programCounter] & seven) {
+					switch (currentLine & seven) {
 					//movwf
 					case 128:
-						Register[programLines[programCounter] & (~seven)]=w;
+						Register[currentLine & (~seven)]=w;
 						programCounter++;
 						System.out.println(w);
 						break;
 
 					case 384:
 						//clrf
-						Register[programLines[programCounter] & (~seven)]=0;
+						Register[currentLine & (~seven)]=0;
 						programCounter++;
 						System.out.println(w);
 						break;
@@ -445,7 +455,7 @@ public class Parser {
 						System.out.println(w);
 						break;
 					default:
-						switch (programLines[programCounter]) {
+						switch (currentLine) {
 						//return
 						case 0x0008:
 							programCounter = adressStack[j - 1];
@@ -472,7 +482,7 @@ public class Parser {
 
 
 	}
-	//bsf(Register[programLines[programCounter]&(~seven)],b)
+	//bsf(Register[currentLine&(~seven)],b)
 	private static int bcf(int f, int b) {
 		// TODO Auto-generated method stub
 		f = f & ~(1 << b);
