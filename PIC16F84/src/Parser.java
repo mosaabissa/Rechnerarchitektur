@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("F:\\\\TPicSim1.LST"); 
+		File file = new File("F:\\\\TPicSim4.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -25,12 +25,12 @@ public class Parser {
 		int c=0;
 		int dc=0;
 		//register array
-		int Register[]=new int[128];
-		for(i=0;i<128;i++)
+		int Register[]=new int[255];
+		int EEPROM[]=new int[64];
+		for(i=0;i<64;i++)
+			EEPROM[i]=0;
+		for(i=0;i<255;i++)
 			Register[i]=0;
-		int Register2[]=new int[128];
-		for(i=0;i<128;i++)
-			Register2[i]=0;
 		int registerBank=0;
 		i=0;
 		while (sc.hasNextLine())  
@@ -187,7 +187,7 @@ public class Parser {
 					//addwf
 					testLine=Register[currentLine & (~seven)]+w;
 					if (testLine>255)
-						testLine=testLine-255;
+						testLine=testLine-256;
 					
 					if((currentLine & (~six))>127)
 						Register[currentLine & (~seven)]=testLine;
@@ -247,7 +247,7 @@ public class Parser {
 				case 2560:
 					//incf
 					if (Register[currentLine
-							& (~seven)]+1 > 0xff) {
+							& (~seven)]+1 <= 0xff) {
 
 						if ((currentLine & (~six)) > 127)
 							Register[currentLine
@@ -289,25 +289,17 @@ public class Parser {
 					 {
 						//subwf
 						//TODO make sure normal subtraction is ok
-						/*
-						 * if(Register[currentLine & (~seven)]-1>=0)
-						{
-							if((currentLine & (~six))>127)
-								Register[currentLine & (~seven)]=Register[currentLine & (~seven)]-1;
 						
-							else
-								w=Register[currentLine & (~seven)]-1;
-						}
-						else if((currentLine & (~six))<=127)
-							w=0xff;
-						else
-							Register[currentLine & (~seven)]=0xff;*/
+						 testLine=Register[currentLine & (~seven)] - w;
+						 if(testLine<0)
+							 testLine=testLine+256;
+						 
 						if ((currentLine & (~six)) > 127)
 							Register[currentLine
-									& (~seven)] = (Register[currentLine & (~seven)] - w)&0xff;
+									& (~seven)] = testLine;
 
 						else
-							w = (Register[currentLine & (~seven)] - w)&0xff;
+							w = testLine;
 					}
 					programCounter++;
 
@@ -344,9 +336,10 @@ public class Parser {
 						//Register[currentLine & (~seven)]=rrf(Register[currentLine & (~seven)]);
 						testLine=c;
 					testLine2=Register[currentLine & (~seven)];
-					if(testLine2>=128)
+					if(testLine2>127)
 						c=1;
 					testLine2=testLine2<<1;
+					testLine2=testLine2&0xff;
 
 					if(testLine==1)
 						testLine2=testLine2+1;
@@ -389,42 +382,57 @@ public class Parser {
 					break;
 				case 2816:
 					//decfsz
-					int testRegister=Register[currentLine
+					testLine=Register[currentLine
 							& (~seven)];
+					
+					if(testLine-1<0)
+						testLine=255;
+					else
+						testLine--;
+					
+					if (testLine!=0) 
+						programCounter++;
+					else
+						programCounter=programCounter+2;
+					
+					
+					
+					
 
 
 
 					if ((currentLine & (~six)) > 127)
 						Register[currentLine
-								& (~seven)] = Register[currentLine & (~seven)] - 1;
+								& (~seven)] = testLine;
 
 					else
-						w = Register[currentLine & (~seven)] - 1;
+						w = testLine;
 
-					if (testRegister-1!=0) 
-						programCounter++;
-					else
-						programCounter=programCounter+2;
+					
 
 					System.out.println(w);
 
 					break;
 				case 3840:
 					//incfsz
-					int testRegister2=Register[currentLine
+					testLine=Register[currentLine
 							& (~seven)];
+					if(testLine+1>255)
+						testLine=0;
+					else
+						testLine++;
 
 
 
 
 					if ((currentLine & (~six)) > 127)
 						Register[currentLine
-								& (~seven)] = Register[currentLine & (~seven)] + 1;
+								& (~seven)] =testLine;
 
 					else
-						w = Register[currentLine & (~seven)] + 1;
+						w = testLine;
 
-					if (testRegister2+1!=0) 
+					if (testLine!=0) 
 						programCounter++;
 					else
 						programCounter=programCounter+2;
