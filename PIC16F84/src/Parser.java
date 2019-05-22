@@ -18,7 +18,7 @@ public class Parser {
 		int six=16128;
 		int five=15872;
 		int four=15360;
-		int three=14336;
+		int three=0x3800;
 		int noOp=0b0000;
 		//flags
 		int z=0;
@@ -86,7 +86,8 @@ public class Parser {
 					System.out.println(w);
 					break;
 				case 10240:
-					programCounter=programCounter & (~three);
+					//goto
+					programCounter=currentLine & (~three);
 					//System.out.println(w);
 					break;
 
