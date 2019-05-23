@@ -71,8 +71,18 @@ public class Parser {
 		int testLine2=0;
 		//TODO implement flags
 		int currentLine=programLines[programCounter];
+		//timer variable
+		int TMR0=0;
 		while(0==0)
 		{
+			//timer interrupt
+			if(TMR0==255 && Register[1]==0)
+			{
+				//T0IF (bit 2 from INTCON) is set
+				Register[0x8b]=bsf(Register[0x8b],2);
+				Register[0x0b]=bsf(Register[0x0b],2);
+			}
+			TMR0=Register[1];
 			currentLine=programLines[programCounter];
 			//noop code check
 			if (currentLine !=0) {
