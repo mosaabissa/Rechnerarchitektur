@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("F:\\\\TPicSim7.LST"); 
+		File file = new File("E:\\\\TPicSim8.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -31,7 +31,7 @@ public class Parser {
 			EEPROM[i]=0;
 		for(i=0;i<255;i++)
 			Register[i]=0;
-		int registerBank=0;
+		
 		i=0;
 		while (sc.hasNextLine())  
 		{
@@ -73,8 +73,13 @@ public class Parser {
 		int currentLine=programLines[programCounter];
 		//timer variable
 		int TMR0=0;
+		//RB0 bit number 0 in PORTB (06h)
+		int RB0=0;
+		//RP0 5 bit in statues register
+		int bank=0;
 		while(0==0)
 		{
+			bank=Register[3]&0x10;
 			//timer interrupt
 			if(TMR0==255 && Register[1]==0)
 			{
@@ -82,8 +87,22 @@ public class Parser {
 				Register[0x8b]=bsf(Register[0x8b],2);
 				Register[0x0b]=bsf(Register[0x0b],2);
 			}
+			if(RB0==0 && (Register[1]&1)==1)
+			{
+				adressStack[j]=programCounter;
+				j++;
+				currentLine=Register[4];
+			}
+			else if(RB0==1 && (Register[6]&1)==0)
+			{
+				programCounter=adressStack[j-1];
+				j--;
+			}
+			else
+				currentLine=programLines[programCounter];
 			TMR0=Register[1];
-			currentLine=programLines[programCounter];
+			RB0=Register[0x06]&1;
+			
 			//noop code check
 			if (currentLine !=0) {
 				//first three digits
@@ -120,6 +139,8 @@ public class Parser {
 						//bsf
 						int b = currentLine&0x0380;
 						b=b>>7;
+		//TODO add bank 1
+		if(bank!=0 )
 		Register[currentLine&(~seven)]=bsf(Register[currentLine&(~seven)],b);
 		System.out.println(w);
 		programCounter++;
