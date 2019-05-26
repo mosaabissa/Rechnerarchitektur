@@ -102,7 +102,23 @@ public class Parser {
 				currentLine=programLines[programCounter];
 			TMR0=Register[1];
 			RB0=Register[0x06]&1;
-			
+			//end of timer interrupt
+			//EEPROM
+			//write
+			if((Register[0x88]&0b10)==0b10)
+			{
+				EEPROM[Register[0x9]&0b111111]=Register[0x8];
+				Register[0x88]=bcf(Register[0x88],1);
+			}
+			//end write
+			//read
+			if((Register[0x88]&0b1)==0b1)
+			{
+				Register[0x8]=EEPROM[Register[0x9]&0b111111];
+				Register[0x88]=bcf(Register[0x88],0);
+			}
+			//end read
+			//end of EEPROM
 			//noop code check
 			if (currentLine !=0) {
 				//first three digits
