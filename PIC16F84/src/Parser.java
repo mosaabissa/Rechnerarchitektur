@@ -31,6 +31,8 @@ public class Parser {
 			EEPROM[i]=0;
 		for(i=0;i<255;i++)
 			Register[i]=0;
+		//address for f commands
+		int address=0;
 		
 		i=0;
 		while (sc.hasNextLine())  
@@ -79,7 +81,7 @@ public class Parser {
 		int bank=0;
 		while(0==0)
 		{
-			bank=Register[3]&0x10;
+			bank=Register[3]&0x100000;
 			//timer interrupt
 			if(TMR0==255 && Register[1]==0)
 			{
@@ -155,9 +157,12 @@ public class Parser {
 						//bsf
 						int b = currentLine&0x0380;
 						b=b>>7;
-		//TODO add bank 1
-		if(bank!=0 )
-		Register[currentLine&(~seven)]=bsf(Register[currentLine&(~seven)],b);
+
+		address=currentLine&(~seven);
+		if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
+			address=address|0x80;
+		
+		Register[address]=bsf(Register[address],b);
 		System.out.println(w);
 		programCounter++;
 		break;
@@ -165,7 +170,10 @@ public class Parser {
 			//bcf
 			testLine = currentLine&0x0380;
 			testLine=testLine>>7;
-			Register[currentLine&(~seven)]=bcf(Register[currentLine&(~seven)],testLine);
+			address=currentLine&(~seven);
+			if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
+				address=address|0x80;
+			Register[address]=bcf(Register[address],testLine);
 			System.out.println(w);
 			programCounter++;
 			break;
