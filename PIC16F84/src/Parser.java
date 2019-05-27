@@ -224,11 +224,23 @@ public class Parser {
 			switch (currentLine & five) {
 			case 15360:
 				w=sublw(currentLine & (~five),w);
+				//z flag
+				if(w==0)
+					Register[3]=bsf(Register[3],2);
+				else
+					Register[3]=bcf(Register[3],2);
+				//end z flag
 				programCounter++;
 				System.out.println(w);
 				break;
 			case 15872:
 				w=addlw(currentLine & (~five),w);
+				//z flag
+				if(w==0)
+					Register[3]=bsf(Register[3],2);
+				else
+					Register[3]=bcf(Register[3],2);
+				//end z flag
 				programCounter++;
 				System.out.println(w);
 				break;
@@ -237,16 +249,34 @@ public class Parser {
 				switch (currentLine & six) {
 				case 14592:
 					w=andlw(currentLine & (~six),w);
+					//z flag
+					if(w==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end z flag
 					programCounter++;
 					System.out.println(w);
 					break;
 				case 14336:
 					w=iorlw(currentLine & (~six),w);
+					//z flag
+					if(w==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end z flag
 					programCounter++;
 					System.out.println(w);
 					break;
 				case 14848:
 					w=xorlw(currentLine & (~six),w);
+					//z flag
+					if(w==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end z flag
 					programCounter++;
 					System.out.println(w);
 					break;
@@ -261,6 +291,12 @@ public class Parser {
 					testLine=Register[address]+w;
 					if (testLine>255)
 						testLine=testLine-256;
+					//Z flag
+					if(testLine==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end Z flag
 					
 					if((currentLine & (~six))>127)
 						Register[address]=testLine;
@@ -278,12 +314,12 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
-				
+					//Z flag
 					if ((Register[address]&w)==0)
-						z=1;
+						Register[3]=bsf(Register[3],2);
 					else
-						z=0;
-						
+						Register[3]=bcf(Register[3],2);
+					//end Z flag
 					if((currentLine & (~six))>127)
 						Register[address]=Register[address]&w;
 
@@ -300,6 +336,13 @@ public class Parser {
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
 					
+					//Z flag
+					if((~Register[address])==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end Z flag
+					
 					if((currentLine & (~six))>127)
 						Register[address]=(~Register[address])&0xff;
 
@@ -315,6 +358,12 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					//Z flag
+					if(Register[address]-1==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end Z flag
 					if(Register[address]-1>=0)
 					{
 						if((currentLine & (~six))>127)
@@ -340,16 +389,22 @@ public class Parser {
 					
 					if (Register[currentLine
 							& (~seven)]+1 <= 0xff) {
-
+						Register[3]=bcf(Register[3],2);
 						if ((currentLine & (~six)) > 127)
 							Register[address] = Register[address] + 1;
 
 						else
 							w = Register[address] + 1;
 					}else if((currentLine & (~six))<=127)
+						{
 						w=0;
+						Register[3]=bsf(Register[3],2);
+						}
 					else
+						{
 						Register[address]=0;
+						Register[3]=bsf(Register[3],2);
+						}
 					programCounter++;
 
 					System.out.println(w);
@@ -360,7 +415,12 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
-					
+					//Z flag
+					if(Register[address]==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end Z flag
 					if((currentLine & (~six))>127)
 						Register[address]=Register[address];
 
@@ -376,7 +436,12 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
-					
+					//Z flag
+					if((Register[address] | w)==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//End Z flag
 					if((currentLine & (~six))>127)
 						Register[address]=Register[address] | w;
 
@@ -398,7 +463,12 @@ public class Parser {
 						 testLine=Register[address] - w;
 						 if(testLine<0)
 							 testLine=testLine+256;
-						 
+						 //Z flag
+						 if(testLine==0)
+							 Register[3]=bsf(Register[3],2);
+						 else
+							 Register[3]=bcf(Register[3],2);
+						 //end Z flag
 						if ((currentLine & (~six)) > 127)
 							Register[currentLine
 									& (~seven)] = testLine;
@@ -432,7 +502,12 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
-
+					//Z flag
+					if((Register[address]^w)==0)
+						Register[3]=bsf(Register[3],2);
+					else
+						Register[3]=bcf(Register[3],2);
+					//end Z flag
 					if((currentLine & (~six))>127)
 						Register[address]=Register[address]^w;
 
@@ -592,13 +667,18 @@ public class Parser {
 						if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 							address=address|0x80;
 						Register[address]=0;
+						//Z flag
+							Register[3]=bsf(Register[3],2);
+						//end Z flag
 						programCounter++;
 						System.out.println(w);
 						break;
 					case 256:
 						//clrw
 						w=0;
-						z=1;
+						//Z flag
+						Register[3]=bsf(Register[3],2);
+						//end Z flag
 						programCounter++;
 						System.out.println(w);
 						break;
@@ -657,13 +737,20 @@ public class Parser {
 	}
 	private static int addlw(int i, int w) {
 		i=i& 0b11111111;
-		return i+w;
+		int testLine=i+w;
+		if (i+w>255)
+			testLine=testLine-256;
+		
+		return testLine;
 		// TODO Auto-generated method stub
 
 	}
 	private static int sublw(int i, int w) {
 		i=i& 0b11111111;
-		return i-w;
+		 int testLine=i - w;
+		 if(testLine<0)
+			 testLine=testLine+256;
+		return testLine;
 		// TODO Auto-generated method stub
 	}
 	private static int iorlw(int i, int w) {
