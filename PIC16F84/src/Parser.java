@@ -224,6 +224,12 @@ public class Parser {
 			switch (currentLine & five) {
 			case 15360:
 				w=sublw(currentLine & (~five),w);
+				//c flag
+				if(((currentLine & (~five))-w)<0)
+					Register[3]=bsf(Register[3],0);
+				else
+					Register[3]=bcf(Register[3],0);
+				//end c flag
 				//z flag
 				if(w==0)
 					Register[3]=bsf(Register[3],2);
@@ -235,6 +241,12 @@ public class Parser {
 				break;
 			case 15872:
 				w=addlw(currentLine & (~five),w);
+				//c flag
+				if(((currentLine & (~five))+w)>255)
+					Register[3]=bsf(Register[3],0);
+				else
+					Register[3]=bcf(Register[3],0);
+				//end c flag
 				//z flag
 				if(w==0)
 					Register[3]=bsf(Register[3],2);
@@ -289,8 +301,14 @@ public class Parser {
 					
 					
 					testLine=Register[address]+w;
+					Register[3]=bcf(Register[3],0);
 					if (testLine>255)
+					{
+						//c flag
+						Register[3]=bsf(Register[3],0);
+						//end c flag
 						testLine=testLine-256;
+					}
 					//Z flag
 					if(testLine==0)
 						Register[3]=bsf(Register[3],2);
@@ -461,8 +479,12 @@ public class Parser {
 								address=address|0x80;
 							
 						 testLine=Register[address] - w;
+						 Register[3]=bcf(Register[3],0);
 						 if(testLine<0)
+						 {
+							 Register[3]=bsf(Register[3],0);
 							 testLine=testLine+256;
+						 }
 						 //Z flag
 						 if(testLine==0)
 							 Register[3]=bsf(Register[3],2);
@@ -527,10 +549,12 @@ public class Parser {
 
 					if((currentLine & (~six))>127)
 						//Register[address]=rrf(Register[address]);
-						testLine=c;
+						
+						testLine=Register[3]&1;
 					testLine2=Register[address];
 					if(testLine2>127)
-						c=1;
+						Register[3]=bsf(Register[3],0);
+						
 					testLine2=testLine2<<1;
 					testLine2=testLine2&0xff;
 
@@ -557,10 +581,10 @@ public class Parser {
 
 					if((currentLine & (~six))>127)
 						//Register[address]=rrf(Register[address]);
-						testLine=c;
+						testLine=Register[3]&1;
 					testLine2=Register[address];
 					if(testLine2%2==1)
-						c=1;
+						Register[3]=bsf(Register[3],0);
 					testLine2=testLine2>>1;
 
 					if(testLine==1)
