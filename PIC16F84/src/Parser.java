@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("F:\\\\TPicSim3.LST"); 
+		File file = new File("F:\\\\TPicSim12.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -81,7 +81,7 @@ public class Parser {
 		int bank=0;
 		while(0==0)
 		{
-			bank=Register[3]&0x100000;
+			bank=Register[3]&0b100000;
 			//timer interrupt
 			if(TMR0==255 && Register[1]==0)
 			{
@@ -111,6 +111,7 @@ public class Parser {
 			{
 				EEPROM[Register[0x9]&0b111111]=Register[0x8];
 				Register[0x88]=bcf(Register[0x88],1);
+				Register[0x88]=bsf(Register[0x88],4);
 			}
 			//end write
 			//read
