@@ -82,12 +82,18 @@ public class Parser {
 		int PCLATH=0;
 		while(0==0)
 		{
+			//program counter
+			
+			programCounter=Register[2]&0xff;
+			//PCLATH=Register[0xa]&0b11111;
+			//PCLATH=PCLATH<<8;
+			//programCounter=programCounter|PCLATH;
+			//end program counter
 			bank=Register[3]&0b100000;
 			//timer interrupt
 			if(TMR0==255 && Register[1]==0)
 			{
 				//T0IF (bit 2 from INTCON) is set
-				Register[0x8b]=bsf(Register[0x8b],2);
 				Register[0x0b]=bsf(Register[0x0b],2);
 			}
 			if(RB0==0 && (Register[1]&1)==1)
@@ -124,13 +130,7 @@ public class Parser {
 			}
 			//end read
 			//end of EEPROM
-			//program counter
 			
-			programCounter=Register[2]&0xff;
-			PCLATH=Register[0xa]&0b11111;
-			PCLATH=PCLATH<<8;
-			programCounter=programCounter|PCLATH;
-			//end program counter
 			//noop code check
 			if (currentLine !=0) {
 				//first three digits
@@ -336,8 +336,16 @@ public class Parser {
 					//end Z flag
 					
 					if((currentLine & (~six))>127)
+					{
 						Register[address]=testLine;
-
+						if(address==2)
+						{
+							programCounter=Register[2]&0xff;
+							PCLATH=Register[0xa]&0b11111;
+							PCLATH=PCLATH<<8;
+							programCounter=programCounter|PCLATH;
+						}
+					}
 					else
 						w=testLine;
 					Register[2]++;
