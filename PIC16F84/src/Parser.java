@@ -64,7 +64,7 @@ public class Parser {
 		//		System.out.println(linesinINT[j]);
 		//	j++;
 		//}
-		int programCounter=0;
+		
 		//address stack index
 		int j=0;
 		int w=0;
@@ -72,7 +72,7 @@ public class Parser {
 		int testLine=0;
 		int testLine2=0;
 		//TODO implement flags
-		int currentLine=programLines[programCounter];
+		int currentLine=programLines[Register[2]];
 		//timer variable
 		int TMR0=0;
 		//RB0 bit number 0 in PORTB (06h)
@@ -91,24 +91,25 @@ public class Parser {
 			}
 			if(RB0==0 && (Register[1]&1)==1)
 			{
-				adressStack[j]=programCounter;
+				adressStack[j]=Register[2];
 				j++;
 				currentLine=Register[4];
 			}
 			else if(RB0==1 && (Register[6]&1)==0)
 			{
-				programCounter=adressStack[j-1];
+				Register[2]=adressStack[j-1];
 				j--;
 			}
 			else
-				currentLine=programLines[programCounter];
+				currentLine=programLines[Register[2]];
 			TMR0=Register[1];
 			RB0=Register[0x06]&1;
 			//end of timer interrupt
 			//EEPROM
 			//write
-			if((Register[0x88]&0b10)==0b10)
+			if((Register[0x88]&0b10)==0b10 && currentLine==0x3055 && programLines[Register[2]+1]==0x0089 && programLines[Register[2]+2]==0x30AA && programLines[Register[2]+3]==0x0089)
 			{
+				Register[2]=Register[2]+4;
 				EEPROM[Register[0x9]&0b111111]=Register[0x8];
 				Register[0x88]=bcf(Register[0x88],1);
 				Register[0x88]=bsf(Register[0x88],4);
@@ -128,14 +129,14 @@ public class Parser {
 				switch (currentLine & three) {
 				//call
 				case 8192:
-					adressStack[j]=programCounter+1;
+					adressStack[j]=Register[2]+1;
 					j++;
-					programCounter=currentLine & (~three);
+					Register[2]=currentLine & (~three);
 					System.out.println(w);
 					break;
 				case 10240:
 					//goto
-					programCounter=currentLine & (~three);
+					Register[2]=currentLine & (~three);
 					//System.out.println(w);
 					break;
 
@@ -144,13 +145,13 @@ public class Parser {
 					switch (currentLine & four) {
 					case 12288:
 						w=movlw(currentLine & (~four));
-						programCounter++;
+						Register[2]++;
 						System.out.println(w);
 						break;
 						//returnlw
 					case 0b11010000000000:
 						w=currentLine & (~six);
-						programCounter=adressStack[j-1];
+						Register[2]=adressStack[j-1];
 						j--;
 						System.out.println(w);
 						break;
@@ -165,7 +166,7 @@ public class Parser {
 		
 		Register[address]=bsf(Register[address],b);
 		System.out.println(w);
-		programCounter++;
+		Register[2]++;
 		break;
 		case 0x1000:
 			//bcf
@@ -176,7 +177,7 @@ public class Parser {
 				address=address|0x80;
 			Register[address]=bcf(Register[address],testLine);
 			System.out.println(w);
-			programCounter++;
+			Register[2]++;
 			break;
 
 		case 0x1800:
@@ -191,9 +192,9 @@ public class Parser {
 			testLine2= Register[address];
 			testLine2=testLine2>>testLine;
 			if(testLine2%2==0)
-				programCounter=programCounter+2;
+				Register[2]=Register[2]+2;
 			else
-				programCounter++;
+				Register[2]++;
 
 			System.out.println(w);
 
@@ -211,9 +212,9 @@ public class Parser {
 			testLine2= Register[address];
 			testLine2=testLine2>>testLine;
 			if(testLine2%2==1)
-				programCounter=programCounter+2;
+				Register[2]=Register[2]+2;
 			else
-				programCounter++;
+				Register[2]++;
 
 			System.out.println(w);
 
@@ -236,7 +237,7 @@ public class Parser {
 				else
 					Register[3]=bcf(Register[3],2);
 				//end z flag
-				programCounter++;
+				Register[2]++;
 				System.out.println(w);
 				break;
 			case 15872:
@@ -253,7 +254,7 @@ public class Parser {
 				else
 					Register[3]=bcf(Register[3],2);
 				//end z flag
-				programCounter++;
+				Register[2]++;
 				System.out.println(w);
 				break;
 			default:
@@ -267,7 +268,7 @@ public class Parser {
 					else
 						Register[3]=bcf(Register[3],2);
 					//end z flag
-					programCounter++;
+					Register[2]++;
 					System.out.println(w);
 					break;
 				case 14336:
@@ -278,7 +279,7 @@ public class Parser {
 					else
 						Register[3]=bcf(Register[3],2);
 					//end z flag
-					programCounter++;
+					Register[2]++;
 					System.out.println(w);
 					break;
 				case 14848:
@@ -289,7 +290,7 @@ public class Parser {
 					else
 						Register[3]=bcf(Register[3],2);
 					//end z flag
-					programCounter++;
+					Register[2]++;
 					System.out.println(w);
 					break;
 				case 1792:
@@ -321,7 +322,7 @@ public class Parser {
 
 					else
 						w=testLine;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -343,7 +344,7 @@ public class Parser {
 
 					else
 						w=Register[address]&w;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -366,7 +367,7 @@ public class Parser {
 
 					else
 						w=(~Register[address])&0xff;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -394,7 +395,7 @@ public class Parser {
 						w=0xff;
 					else
 						Register[address]=0xff;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -423,7 +424,7 @@ public class Parser {
 						Register[address]=0;
 						Register[3]=bsf(Register[3],2);
 						}
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -444,7 +445,7 @@ public class Parser {
 
 					else
 						w=Register[address];
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -465,7 +466,7 @@ public class Parser {
 
 					else
 						w=Register[address] | w;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -498,7 +499,7 @@ public class Parser {
 						else
 							w = testLine;
 					}
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -514,7 +515,7 @@ public class Parser {
 
 					else
 						w=swapf(Register[address]);
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -535,7 +536,7 @@ public class Parser {
 
 					else
 						w=Register[address]^w;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -568,7 +569,7 @@ public class Parser {
 
 					else
 						w = testLine2;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -597,7 +598,7 @@ public class Parser {
 
 					else
 						w = testLine2;
-					programCounter++;
+					Register[2]++;
 
 					System.out.println(w);
 					break;
@@ -616,9 +617,9 @@ public class Parser {
 						testLine--;
 					
 					if (testLine!=0) 
-						programCounter++;
+						Register[2]++;
 					else
-						programCounter=programCounter+2;
+						Register[2]=Register[2]+2;
 					
 					
 					
@@ -663,9 +664,9 @@ public class Parser {
 						w = testLine;
 
 					if (testLine!=0) 
-						programCounter++;
+						Register[2]++;
 					else
-						programCounter=programCounter+2;
+						Register[2]=Register[2]+2;
 
 					System.out.println(w);
 
@@ -680,7 +681,7 @@ public class Parser {
 							address=address|0x80;
 						
 						Register[address]=w;
-						programCounter++;
+						Register[2]++;
 						System.out.println(w);
 						break;
 
@@ -694,7 +695,7 @@ public class Parser {
 						//Z flag
 							Register[3]=bsf(Register[3],2);
 						//end Z flag
-						programCounter++;
+						Register[2]++;
 						System.out.println(w);
 						break;
 					case 256:
@@ -703,14 +704,14 @@ public class Parser {
 						//Z flag
 						Register[3]=bsf(Register[3],2);
 						//end Z flag
-						programCounter++;
+						Register[2]++;
 						System.out.println(w);
 						break;
 					default:
 						switch (currentLine) {
 						//return
 						case 0x0008:
-							programCounter = adressStack[j - 1];
+							Register[2] = adressStack[j - 1];
 							j--;
 							System.out.println(w);
 							break;
@@ -727,7 +728,7 @@ public class Parser {
 					}
 					break;
 				}
-			}else { programCounter++;
+			}else { Register[2]++;
 			System.out.println(w);
 			}
 		}
