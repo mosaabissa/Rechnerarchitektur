@@ -64,7 +64,7 @@ public class Parser {
 		//		System.out.println(linesinINT[j]);
 		//	j++;
 		//}
-		
+		int programCounter=0;
 		//address stack index
 		int j=0;
 		int w=0;
@@ -72,13 +72,14 @@ public class Parser {
 		int testLine=0;
 		int testLine2=0;
 		//TODO implement flags
-		int currentLine=programLines[Register[2]];
+		int currentLine=programLines[programCounter];
 		//timer variable
 		int TMR0=0;
 		//RB0 bit number 0 in PORTB (06h)
 		int RB0=0;
 		//RP0 5 bit in statues register
 		int bank=0;
+		int PCLATH=0;
 		while(0==0)
 		{
 			bank=Register[3]&0b100000;
@@ -91,25 +92,25 @@ public class Parser {
 			}
 			if(RB0==0 && (Register[1]&1)==1)
 			{
-				adressStack[j]=Register[2];
+				adressStack[j]=programCounter;
 				j++;
 				currentLine=Register[4];
 			}
 			else if(RB0==1 && (Register[6]&1)==0)
 			{
-				Register[2]=adressStack[j-1];
+				programCounter=adressStack[j-1];
 				j--;
 			}
 			else
-				currentLine=programLines[Register[2]];
+				currentLine=programLines[programCounter];
 			TMR0=Register[1];
 			RB0=Register[0x06]&1;
 			//end of timer interrupt
 			//EEPROM
 			//write
-			if((Register[0x88]&0b10)==0b10 && currentLine==0x3055 && programLines[Register[2]+1]==0x0089 && programLines[Register[2]+2]==0x30AA && programLines[Register[2]+3]==0x0089)
+			if((Register[0x88]&0b10)==0b10 && currentLine==0x3055 && programLines[programCounter+1]==0x0089 && programLines[programCounter+2]==0x30AA && programLines[programCounter+3]==0x0089)
 			{
-				Register[2]=Register[2]+4;
+				programCounter=programCounter+4;
 				EEPROM[Register[0x9]&0b111111]=Register[0x8];
 				Register[0x88]=bcf(Register[0x88],1);
 				Register[0x88]=bsf(Register[0x88],4);
@@ -123,20 +124,33 @@ public class Parser {
 			}
 			//end read
 			//end of EEPROM
+			//program counter
+			
+			programCounter=Register[2]&0xff;
+			PCLATH=Register[0xa]&0b11111;
+			PCLATH=PCLATH<<8;
+			programCounter=programCounter|PCLATH;
+			//end program counter
 			//noop code check
 			if (currentLine !=0) {
 				//first three digits
 				switch (currentLine & three) {
 				//call
 				case 8192:
-					adressStack[j]=Register[2]+1;
+					adressStack[j]=programCounter+1;
 					j++;
-					Register[2]=currentLine & (~three);
+					programCounter=currentLine & (~three);
+					PCLATH=Register[0xa]&0b11000;
+					PCLATH=PCLATH<<8;
+					programCounter=programCounter|PCLATH;
 					System.out.println(w);
 					break;
 				case 10240:
 					//goto
-					Register[2]=currentLine & (~three);
+					programCounter=currentLine & (~three);
+					PCLATH=Register[0xa]&0b11000;
+					PCLATH=PCLATH<<8;
+					programCounter=programCounter|PCLATH;
 					//System.out.println(w);
 					break;
 
@@ -151,7 +165,11 @@ public class Parser {
 						//returnlw
 					case 0b11010000000000:
 						w=currentLine & (~six);
-						Register[2]=adressStack[j-1];
+						programCounter=adressStack[j-1];
+						Register[2]=programCounter&0xff;
+						Register[0xa]=programCounter&0x1f00;
+						Register[0xa]=Register[0xa]>>8;
+						PCLATH=Register[0xa]&0b11111;
 						j--;
 						System.out.println(w);
 						break;
@@ -471,7 +489,7 @@ public class Parser {
 					System.out.println(w);
 					break;
 				case 512:
-					 {
+					 
 						//subwf
 						//TODO make sure normal subtraction is ok
 						//bank check
@@ -498,7 +516,7 @@ public class Parser {
 
 						else
 							w = testLine;
-					}
+					
 					Register[2]++;
 
 					System.out.println(w);
@@ -711,7 +729,7 @@ public class Parser {
 						switch (currentLine) {
 						//return
 						case 0x0008:
-							Register[2] = adressStack[j - 1];
+							programCounter = adressStack[j - 1];
 							j--;
 							System.out.println(w);
 							break;
