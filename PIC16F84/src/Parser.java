@@ -6,7 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
-		File file = new File("F:\\\\TPicSim12.LST"); 
+		File file = new File("F:\\\\TPicSim2.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -84,7 +84,8 @@ public class Parser {
 		{
 			//program counter
 			
-			programCounter=Register[2]&0xff;
+			if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
+				programCounter=Register[2]&0xff;
 			//PCLATH=Register[0xa]&0b11111;
 			//PCLATH=PCLATH<<8;
 			//programCounter=programCounter|PCLATH;
@@ -143,6 +144,7 @@ public class Parser {
 					PCLATH=Register[0xa]&0b11000;
 					PCLATH=PCLATH<<8;
 					programCounter=programCounter|PCLATH;
+					Register[2]=programCounter&0xff;
 					System.out.println(w);
 					break;
 				case 10240:
@@ -151,6 +153,7 @@ public class Parser {
 					PCLATH=Register[0xa]&0b11000;
 					PCLATH=PCLATH<<8;
 					programCounter=programCounter|PCLATH;
+					Register[2]=programCounter&0xff;
 					//System.out.println(w);
 					break;
 
@@ -737,9 +740,14 @@ public class Parser {
 						switch (currentLine) {
 						//return
 						case 0x0008:
-							programCounter = adressStack[j - 1];
+							programCounter=adressStack[j-1];
+							Register[2]=programCounter&0xff;
+							Register[0xa]=programCounter&0x1f00;
+							Register[0xa]=Register[0xa]>>8;
+							PCLATH=Register[0xa]&0b11111;
 							j--;
 							System.out.println(w);
+							
 							break;
 						default:
 							break;

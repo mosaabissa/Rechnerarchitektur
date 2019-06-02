@@ -20,6 +20,9 @@ import java.awt.GridLayout;
 import java.awt.TextArea;
 import javax.swing.JPanel;
 import javax.swing.JFileChooser;
+import javax.swing.JTabbedPane;
+import java.awt.Component;
+import javax.swing.ScrollPaneConstants;
 
 public class SimulationGui {
 
@@ -37,6 +40,13 @@ public class SimulationGui {
 	private JButton btnPin_4;
 	private JPanel panel_1;
 	private JFileChooser fileChooser;
+	private JTabbedPane tabbedPane;
+	private JScrollPane SFRScroll;
+	private TextArea SFR;
+	private JScrollPane GPRScroll;
+	private TextArea GPR;
+	private JScrollPane StackScroll;
+	private TextArea Stack;
 
 	/**
 	 * Launch the application.
@@ -102,7 +112,7 @@ public class SimulationGui {
 				int c=0;
 				int dc=0;
 				//register array
-				int Register[]=new int[255];
+				int Register[]=new int[256];
 				int EEPROM[]=new int[64];
 				for(i=0;i<64;i++)
 					EEPROM[i]=0;
@@ -164,21 +174,55 @@ public class SimulationGui {
 						test=test+line[i]+"\n";	
 				}
 				lst.setText(test);
-				while(programCounter<2)
+				while(programCounter<9)
 				{
 					//GUI
 					//registerTextArea.setText("test");
 					//getRegisterTextArea().append("ur text");
 					//registerTextArea.setText(Register.toString());
 					String register="";
-					for(int aa=0;aa<255;aa++)
+					for(int aa=0;aa<256;aa++)
 						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
-				
+					
 					registerTextArea.setText(register);
+					//SFR
+					register="";
+					register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+					register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+					register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+					register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+					register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+					register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+					register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+					register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+					register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+					register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+					register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+					register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+					register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+					register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+					register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+					register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+					SFR.setText(register);
+					//end SFR	
+					//GPR
+					register="";
+					for(int aa=12;aa<80;aa++)
+						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+					
+					GPR.setText(register);
+					//end GPR
+					//stack
+					register="";
+					for(int aa=0;aa<j;aa++)
+						register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+					
+					Stack.setText(register);
+					//end stack
 					//end GUI
 					//program counter
-					
-					programCounter=Register[2]&0xff;
+					if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
+						programCounter=Register[2]&0xff;
 					//PCLATH=Register[0xa]&0b11111;
 					//PCLATH=PCLATH<<8;
 					//programCounter=programCounter|PCLATH;
@@ -210,6 +254,7 @@ public class SimulationGui {
 					//write
 					if((Register[0x88]&0b10)==0b10 && currentLine==0x3055 && programLines[programCounter+1]==0x0089 && programLines[programCounter+2]==0x30AA && programLines[programCounter+3]==0x0089)
 					{
+						Register[0x89]=0xaa;
 						programCounter=programCounter+4;
 						EEPROM[Register[0x9]&0b111111]=Register[0x8];
 						Register[0x88]=bcf(Register[0x88],1);
@@ -237,6 +282,7 @@ public class SimulationGui {
 							PCLATH=Register[0xa]&0b11000;
 							PCLATH=PCLATH<<8;
 							programCounter=programCounter|PCLATH;
+							Register[2]=programCounter&0xff;
 							System.out.println(w);
 							break;
 						case 10240:
@@ -245,6 +291,7 @@ public class SimulationGui {
 							PCLATH=Register[0xa]&0b11000;
 							PCLATH=PCLATH<<8;
 							programCounter=programCounter|PCLATH;
+							Register[2]=programCounter&0xff;
 							//System.out.println(w);
 							break;
 
@@ -831,7 +878,11 @@ public class SimulationGui {
 								switch (currentLine) {
 								//return
 								case 0x0008:
-									programCounter = adressStack[j - 1];
+									programCounter=adressStack[j-1];
+									Register[2]=programCounter&0xff;
+									Register[0xa]=programCounter&0x1f00;
+									Register[0xa]=Register[0xa]>>8;
+									PCLATH=Register[0xa]&0b11111;
 									j--;
 									System.out.println(w);
 									break;
@@ -855,31 +906,7 @@ public class SimulationGui {
 			}
 		});
 		frame.getContentPane().setLayout(new GridLayout(0, 2, 0, 0));
-		
-		lstScroll = new JScrollPane();
-		frame.getContentPane().add(lstScroll);
-		
-		lst = new TextArea();
-		lst.setEditable(false);
-		lst.setFont(new Font("Dialog", Font.PLAIN, 22));
-		lst.setText("lst");
-		lstScroll.setViewportView(lst);
 		frame.getContentPane().add(btnPlay);
-		
-		
-		
-		registerTextArea = new JTextArea();
-		registerTextArea.setRows(256);
-		registerTextArea.setText("assd");
-		registerTextArea.setFont(new Font("Monospaced", Font.PLAIN, 22));
-		registerTextArea.setDisabledTextColor(Color.DARK_GRAY);
-		registerTextArea.setEditable(false);
-		//frame.getContentPane().add(registerTextArea, BorderLayout.WEST);
-		registerTextArea.setColumns(10);
-		scrollRegisterTextArea= new JScrollPane (registerTextArea, 
-				   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-
-				frame.getContentPane().add(scrollRegisterTextArea);
 				
 				scrollPane = new JScrollPane();
 				frame.getContentPane().add(scrollPane);
@@ -908,6 +935,53 @@ public class SimulationGui {
 				
 				fileChooser = new JFileChooser();
 				panel_1.add(fileChooser);
+				
+				tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+				frame.getContentPane().add(tabbedPane);
+				
+				lstScroll = new JScrollPane();
+				tabbedPane.addTab("LST", null, lstScroll, null);
+				
+				lst = new TextArea();
+				lst.setEditable(false);
+				lst.setFont(new Font("Dialog", Font.PLAIN, 22));
+				lst.setText("lst");
+				lstScroll.setViewportView(lst);
+				
+				
+				
+				registerTextArea = new JTextArea();
+				registerTextArea.setRows(256);
+				registerTextArea.setText("assd");
+				registerTextArea.setFont(new Font("Monospaced", Font.PLAIN, 22));
+				registerTextArea.setDisabledTextColor(Color.DARK_GRAY);
+				registerTextArea.setEditable(false);
+				//frame.getContentPane().add(registerTextArea, BorderLayout.WEST);
+				registerTextArea.setColumns(10);
+				scrollRegisterTextArea= new JScrollPane (registerTextArea, 
+						   JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+				tabbedPane.addTab("Register", null, scrollRegisterTextArea, null);
+				
+				SFRScroll = new JScrollPane((Component) null, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+				tabbedPane.addTab("SFR", null, SFRScroll, null);
+				
+				SFR = new TextArea();
+				SFR.setFont(new Font("Dialog", Font.PLAIN, 22));
+				SFRScroll.setViewportView(SFR);
+				
+				GPRScroll = new JScrollPane((Component) null, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+				tabbedPane.addTab("GPR", null, GPRScroll, null);
+				
+				GPR = new TextArea();
+				GPR.setFont(new Font("Dialog", Font.PLAIN, 22));
+				GPRScroll.setViewportView(GPR);
+				
+				StackScroll = new JScrollPane((Component) null, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+				tabbedPane.addTab("Stack", null, StackScroll, null);
+				
+				Stack = new TextArea();
+				Stack.setFont(new Font("Dialog", Font.PLAIN, 22));
+				StackScroll.setViewportView(Stack);
 				frame.setVisible (true);
 	}
 
