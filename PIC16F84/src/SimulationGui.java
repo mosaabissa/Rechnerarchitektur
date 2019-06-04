@@ -172,9 +172,15 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[5]&0b1000)==0)
-							bsf(Register[5],3);
+							{
+								bsf(Register[5],3);
+								if((Register[0x81]&0b10000)==0)
+									Register[1]++;
+							}
 						else
 							bcf(Register[5],3);
+						if((Register[0x81]&0b10000)==0b10000)
+							Register[1]++;
 					}
 				});
 				//end pin2
