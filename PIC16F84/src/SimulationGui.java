@@ -63,6 +63,7 @@ public class SimulationGui {
 	public JSpinner breakPoint;
 	private JScrollPane scrollEEPROM;
 	public DefaultHighlighter highlighter;
+	public DefaultHighlighter.DefaultHighlightPainter painter;
 
 	/**
 	 * Launch the application.
@@ -342,9 +343,26 @@ public class SimulationGui {
 				    breakPoint.commitEdit();
 				} catch ( java.text.ParseException e ) {  }
 				int value = (Integer) breakPoint.getValue();
+				Register[0x81]=0xff;
 				while(programCounter<value)
 				{
+					
+					
 					//GUI
+					//highlight
+					try
+			        {
+						highlighter.removeAllHighlights();
+			            int start =  lst.getLineStartOffset(programCounter);
+			            int end =    lst.getLineEndOffset(programCounter);
+			            highlighter.addHighlight(start, end, painter );
+			            
+			        }
+			        catch(Exception e)
+			        {
+			            System.out.println(e);
+			        }
+					//end highlight
 					//registerTextArea.setText("test");
 					//getRegisterTextArea().append("ur text");
 					//registerTextArea.setText(Register.toString());
@@ -452,6 +470,8 @@ public class SimulationGui {
 							programCounter=programCounter|PCLATH;
 							Register[2]=programCounter&0xff;
 							System.out.println(w);
+							if((Register[0x81]&0b100000)==0)
+								Register[1]++;
 							break;
 						case 10240:
 							//goto
@@ -461,6 +481,8 @@ public class SimulationGui {
 							programCounter=programCounter|PCLATH;
 							Register[2]=programCounter&0xff;
 							//System.out.println(w);
+							if((Register[0x81]&0b100000)==0)
+								Register[1]++;
 							break;
 
 						default:
@@ -481,6 +503,8 @@ public class SimulationGui {
 								PCLATH=Register[0xa]&0b11111;
 								j--;
 								System.out.println(w);
+								if((Register[0x81]&0b100000)==0)
+									Register[1]++;
 								break;
 							case 0x1400:
 								//bsf
@@ -519,7 +543,11 @@ public class SimulationGui {
 					testLine2= Register[address];
 					testLine2=testLine2>>testLine;
 					if(testLine2%2==0)
-						Register[2]=Register[2]+2;
+						{
+							Register[2]=Register[2]+2;
+							if((Register[0x81]&0b100000)==0)
+								Register[1]++;
+						}
 					else
 						Register[2]++;
 
@@ -539,7 +567,11 @@ public class SimulationGui {
 					testLine2= Register[address];
 					testLine2=testLine2>>testLine;
 					if(testLine2%2==1)
-						Register[2]=Register[2]+2;
+						{
+							Register[2]=Register[2]+2;
+							if((Register[0x81]&0b100000)==0)
+								Register[1]++;
+						}
 					else
 						Register[2]++;
 
@@ -954,7 +986,11 @@ public class SimulationGui {
 							if (testLine!=0) 
 								Register[2]++;
 							else
-								Register[2]=Register[2]+2;
+								{
+									Register[2]=Register[2]+2;
+									if((Register[0x81]&0b100000)==0)
+										Register[1]++;
+								}
 							
 							
 							
@@ -1001,7 +1037,11 @@ public class SimulationGui {
 							if (testLine!=0) 
 								Register[2]++;
 							else
-								Register[2]=Register[2]+2;
+								{
+									Register[2]=Register[2]+2;
+									if((Register[0x81]&0b100000)==0)
+										Register[1]++;
+								}
 
 							System.out.println(w);
 
@@ -1052,6 +1092,8 @@ public class SimulationGui {
 									Register[0xa]=Register[0xa]>>8;
 									PCLATH=Register[0xa]&0b11111;
 									j--;
+									if((Register[0x81]&0b100000)==0)
+										Register[1]++;
 									System.out.println(w);
 									break;
 								default:
@@ -1067,8 +1109,12 @@ public class SimulationGui {
 							}
 							break;
 						}
+						if((Register[0x81]&0b100000)==0)
+							Register[1]++;
 					}else { Register[2]++;
 					System.out.println(w);
+					if((Register[0x81]&0b100000)==0)
+						Register[1]++;
 					}
 				}
 			}
@@ -1183,6 +1229,8 @@ public class SimulationGui {
 				scrollPane_1.setViewportView(breakPoint);
 				frame.setVisible (true);
 				highlighter =  (DefaultHighlighter)lst.getHighlighter();
+				painter = new DefaultHighlighter.DefaultHighlightPainter( Color.RED );
+		        highlighter.setDrawsLayeredHighlights(false);
 	}
 
 	public JTextArea getRegisterTextArea()
