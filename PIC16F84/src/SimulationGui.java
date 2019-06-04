@@ -23,6 +23,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JTabbedPane;
 import java.awt.Component;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.JSpinner;
 
 public class SimulationGui {
 
@@ -30,20 +32,22 @@ public class SimulationGui {
 	private JTextArea registerTextArea;
 	private JScrollPane scrollRegisterTextArea;
 	private JScrollPane lstScroll;
-	private TextArea lst;
+	private JTextArea lst;
 	private JScrollPane scrollPane;
 	private JPanel panel;
-	private JButton btnPin_1;
-	private JButton btnPin_2;
-	private JButton btnPin_3;
-	private JButton btnPin_6;
-	private JButton btnPin_7;
-	private JButton btnPin_8;
-	private JButton btnPin_9;
-	private JButton btnPin_10;
-	private JButton btnPin_11;
-	private JButton btnPin_12;
-	private JButton btnPin_13;
+	public JButton btnPin_1;
+	public JButton btnPin_2;
+	public JButton btnPin_3;
+	public JButton btnPin_6;
+	public JButton btnPin_7;
+	public JButton btnPin_8;
+	public JButton btnPin_9;
+	public JButton btnPin_10;
+	public JButton btnPin_11;
+	public JButton btnPin_12;
+	public JButton btnPin_13;
+	public JButton btnPin_17;
+	public JButton btnPin_18;
 	private JPanel panel_1;
 	private JFileChooser fileChooser;
 	private JTabbedPane tabbedPane;
@@ -53,6 +57,12 @@ public class SimulationGui {
 	private TextArea GPR;
 	private JScrollPane StackScroll;
 	private TextArea Stack;
+	private TextArea EEPROMText;
+	private JTabbedPane stuff;
+	private JScrollPane scrollPane_1;
+	public JSpinner breakPoint;
+	private JScrollPane scrollEEPROM;
+	public DefaultHighlighter highlighter;
 
 	/**
 	 * Launch the application.
@@ -91,28 +101,7 @@ public class SimulationGui {
 			public void mouseClicked(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 				//setting up the file(change the disk name accordingly)
-				btnPin_1 = new JButton("pin1");
-				panel.add(btnPin_1);
-				btnPin_2 = new JButton("pin2");
-				panel.add(btnPin_2);
-				btnPin_3 = new JButton("pin3");
-				panel.add(btnPin_3);
-				btnPin_6 = new JButton("pin6");
-				panel.add(btnPin_6);
-				btnPin_7 = new JButton("pin7");
-				panel.add(btnPin_7);
-				btnPin_8 = new JButton("pin8");
-				panel.add(btnPin_8);
-				btnPin_9 = new JButton("pin9");
-				panel.add(btnPin_9);
-				btnPin_10 = new JButton("pin10");
-				panel.add(btnPin_10);
-				btnPin_11 = new JButton("pin11");
-				panel.add(btnPin_11);
-				btnPin_12 = new JButton("pin12");
-				panel.add(btnPin_12);
-				btnPin_13 = new JButton("pin13");
-				panel.add(btnPin_13);
+				
 				File file = new File("F:\\\\TPicSim1.LST"); 
 				file=fileChooser.getSelectedFile();
 				Scanner sc = null;
@@ -163,6 +152,153 @@ public class SimulationGui {
 					}  
 
 				}
+				//pins
+				//pin1
+				
+				btnPin_1.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[5]&0b100)==0)
+							bsf(Register[5],2);
+						else
+							bcf(Register[5],2);
+					}
+				});
+				//end pin1
+				//pin2
+				
+				btnPin_2.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[5]&0b1000)==0)
+							bsf(Register[5],3);
+						else
+							bcf(Register[5],3);
+					}
+				});
+				//end pin2
+				//pin3
+				btnPin_3.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[5]&0b1000)==0)
+							bsf(Register[5],3);
+						else
+							bcf(Register[5],3);
+					}
+				});
+				//end pin3
+				//pin6
+				btnPin_6.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b1)==0)
+							bsf(Register[6],0);
+						else
+							bcf(Register[6],0);
+					}
+				});
+				//end pin6
+				//pin7
+				btnPin_7.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b10)==0)
+							bsf(Register[6],1);
+						else
+							bcf(Register[6],1);
+					}
+				});
+				//end pin7
+				//pin8
+				btnPin_8.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b100)==0)
+							bsf(Register[6],2);
+						else
+							bcf(Register[6],2);
+					}
+				});
+				//end pin8
+				//pin9
+				btnPin_6.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b1000)==0)
+							bsf(Register[6],3);
+						else
+							bcf(Register[6],3);
+					}
+				});
+				//end pin9
+				//pin10
+				btnPin_6.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b10000)==0)
+							bsf(Register[6],4);
+						else
+							bcf(Register[6],4);
+					}
+				});
+				//end pin10
+				//pin11
+				btnPin_11.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b100000)==0)
+							bsf(Register[6],5);
+						else
+							bcf(Register[6],5);
+					}
+				});
+				//end pin11
+				//pin12
+				btnPin_12.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b1000000)==0)
+							bsf(Register[6],6);
+						else
+							bcf(Register[6],6);
+					}
+				});
+				//end pin12
+				//pin13
+				btnPin_13.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[6]&0b10000000)==0)
+							bsf(Register[6],7);
+						else
+							bcf(Register[6],7);
+					}
+				});
+				//end pin13
+				//pin17
+				btnPin_17.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[5]&1)==0)
+							bsf(Register[5],0);
+						else
+							bcf(Register[5],0);
+					}
+				});
+				//end pin17
+				//pin18
+				btnPin_18.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if((Register[5]&0b10)==0)
+							bsf(Register[5],1);
+						else
+							bcf(Register[5],1);
+					}
+				});
+				//end pin18
+				//end pins
 
 				int[] programLines=new int[1000];
 				for(int j=0;j<i;j++)
@@ -202,7 +338,11 @@ public class SimulationGui {
 						test=test+line[i]+"\n";	
 				}
 				lst.setText(test);
-				while(programCounter<5)
+				try {
+				    breakPoint.commitEdit();
+				} catch ( java.text.ParseException e ) {  }
+				int value = (Integer) breakPoint.getValue();
+				while(programCounter<value)
 				{
 					//GUI
 					//registerTextArea.setText("test");
@@ -297,131 +437,7 @@ public class SimulationGui {
 					}
 					//end read
 					//end of EEPROM
-					//pins
-					//pin1
 					
-					btnPin_1.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[5]&0b100)==0)
-								bsf(Register[5],2);
-							else
-								bcf(Register[5],2);
-						}
-					});
-					//end pin1
-					//pin2
-					
-					btnPin_2.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[5]&0b1000)==0)
-								bsf(Register[5],3);
-							else
-								bcf(Register[5],3);
-						}
-					});
-					//end pin2
-					//pin3
-					btnPin_3.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[5]&0b1000)==0)
-								bsf(Register[5],3);
-							else
-								bcf(Register[5],3);
-						}
-					});
-					//end pin3
-					//pin6
-					btnPin_6.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b1)==0)
-								bsf(Register[6],0);
-							else
-								bcf(Register[6],0);
-						}
-					});
-					//end pin6
-					//pin7
-					btnPin_7.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b10)==0)
-								bsf(Register[6],1);
-							else
-								bcf(Register[6],1);
-						}
-					});
-					//end pin7
-					//pin8
-					btnPin_8.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b100)==0)
-								bsf(Register[6],2);
-							else
-								bcf(Register[6],2);
-						}
-					});
-					//end pin8
-					//pin9
-					btnPin_6.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b1000)==0)
-								bsf(Register[6],3);
-							else
-								bcf(Register[6],3);
-						}
-					});
-					//end pin9
-					//pin10
-					btnPin_6.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b10000)==0)
-								bsf(Register[6],4);
-							else
-								bcf(Register[6],4);
-						}
-					});
-					//end pin10
-					//pin11
-					btnPin_11.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b100000)==0)
-								bsf(Register[6],5);
-							else
-								bcf(Register[6],5);
-						}
-					});
-					//end pin11
-					//pin12
-					btnPin_12.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b1000000)==0)
-								bsf(Register[6],6);
-							else
-								bcf(Register[6],6);
-						}
-					});
-					//end pin12
-					//pin13
-					btnPin_13.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							if((Register[6]&0b10000000)==0)
-								bsf(Register[6],7);
-							else
-								bcf(Register[6],7);
-						}
-					});
-					//end pin13
-					//end pins
 					//noop code check
 					if (currentLine !=0) {
 						//first three digits
@@ -1067,7 +1083,32 @@ public class SimulationGui {
 				scrollPane.setViewportView(panel);
 				panel.setLayout(new GridLayout(1, 0, 0, 0));
 				
-				
+				btnPin_1 = new JButton("pin1");
+				panel.add(btnPin_1);
+				btnPin_2 = new JButton("pin2");
+				panel.add(btnPin_2);
+				btnPin_3 = new JButton("pin3");
+				panel.add(btnPin_3);
+				btnPin_6 = new JButton("pin6");
+				panel.add(btnPin_6);
+				btnPin_7 = new JButton("pin7");
+				panel.add(btnPin_7);
+				btnPin_8 = new JButton("pin8");
+				panel.add(btnPin_8);
+				btnPin_9 = new JButton("pin9");
+				panel.add(btnPin_9);
+				btnPin_10 = new JButton("pin10");
+				panel.add(btnPin_10);
+				btnPin_11 = new JButton("pin11");
+				panel.add(btnPin_11);
+				btnPin_12 = new JButton("pin12");
+				panel.add(btnPin_12);
+				btnPin_13 = new JButton("pin13");
+				panel.add(btnPin_13);
+				btnPin_17 = new JButton("pin17");
+				panel.add(btnPin_17);
+				btnPin_18 = new JButton("pin18");
+				panel.add(btnPin_18);
 				
 				
 				
@@ -1084,7 +1125,7 @@ public class SimulationGui {
 				lstScroll = new JScrollPane();
 				tabbedPane.addTab("LST", null, lstScroll, null);
 				
-				lst = new TextArea();
+				lst = new JTextArea();
 				lst.setEditable(false);
 				lst.setFont(new Font("Dialog", Font.PLAIN, 22));
 				lst.setText("lst");
@@ -1124,7 +1165,24 @@ public class SimulationGui {
 				Stack = new TextArea();
 				Stack.setFont(new Font("Dialog", Font.PLAIN, 22));
 				StackScroll.setViewportView(Stack);
+				
+				scrollEEPROM = new JScrollPane((Component) null, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+				tabbedPane.addTab("EEPROM", null, scrollEEPROM, null);
+				
+				EEPROMText = new TextArea();
+				EEPROMText.setFont(new Font("Dialog", Font.PLAIN, 22));
+				scrollEEPROM.setViewportView(EEPROMText);
+				
+				stuff = new JTabbedPane(JTabbedPane.TOP);
+				frame.getContentPane().add(stuff);
+				
+				scrollPane_1 = new JScrollPane();
+				stuff.addTab("Break point", null, scrollPane_1, null);
+				
+				breakPoint = new JSpinner();
+				scrollPane_1.setViewportView(breakPoint);
 				frame.setVisible (true);
+				highlighter =  (DefaultHighlighter)lst.getHighlighter();
 	}
 
 	public JTextArea getRegisterTextArea()
