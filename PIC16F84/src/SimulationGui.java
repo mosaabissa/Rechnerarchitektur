@@ -471,7 +471,15 @@ public class SimulationGui {
 							Register[2]=programCounter&0xff;
 							System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
+							{
+							if(Register[1]==255)
+								{
+								Register[1]=0;
+								Register[0x0b]=bsf(Register[0x0b],2);
+								}
+							else
 								Register[1]++;
+							}
 							break;
 						case 10240:
 							//goto
@@ -482,7 +490,15 @@ public class SimulationGui {
 							Register[2]=programCounter&0xff;
 							//System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
+							{
+							if(Register[1]==255)
+							{
+								Register[1]=0;
+								Register[0x0b]=bsf(Register[0x0b],2);
+								}
+							else
 								Register[1]++;
+							}
 							break;
 
 						default:
@@ -504,7 +520,15 @@ public class SimulationGui {
 								j--;
 								System.out.println(w);
 								if((Register[0x81]&0b100000)==0)
+								{
+								if(Register[1]==255)
+								{
+									Register[1]=0;
+									Register[0x0b]=bsf(Register[0x0b],2);
+									}
+								else
 									Register[1]++;
+								}
 								break;
 							case 0x1400:
 								//bsf
@@ -546,7 +570,15 @@ public class SimulationGui {
 						{
 							Register[2]=Register[2]+2;
 							if((Register[0x81]&0b100000)==0)
+							{
+							if(Register[1]==255)
+							{
+								Register[1]=0;
+								Register[0x0b]=bsf(Register[0x0b],2);
+								}
+							else
 								Register[1]++;
+							}
 						}
 					else
 						Register[2]++;
@@ -570,7 +602,15 @@ public class SimulationGui {
 						{
 							Register[2]=Register[2]+2;
 							if((Register[0x81]&0b100000)==0)
+							{
+							if(Register[1]==255)
+							{
+								Register[1]=0;
+								Register[0x0b]=bsf(Register[0x0b],2);
+								}
+							else
 								Register[1]++;
+							}
 						}
 					else
 						Register[2]++;
@@ -989,7 +1029,15 @@ public class SimulationGui {
 								{
 									Register[2]=Register[2]+2;
 									if((Register[0x81]&0b100000)==0)
+									{
+									if(Register[1]==255)
+									{
+										Register[1]=0;
+										Register[0x0b]=bsf(Register[0x0b],2);
+										}
+									else
 										Register[1]++;
+									}
 								}
 							
 							
@@ -1040,7 +1088,15 @@ public class SimulationGui {
 								{
 									Register[2]=Register[2]+2;
 									if((Register[0x81]&0b100000)==0)
-										Register[1]++;
+										{
+										if(Register[1]==255)
+										{
+											Register[1]=0;
+											Register[0x0b]=bsf(Register[0x0b],2);
+											}
+										else
+											Register[1]++;
+										}
 								}
 
 							System.out.println(w);
@@ -1093,7 +1149,16 @@ public class SimulationGui {
 									PCLATH=Register[0xa]&0b11111;
 									j--;
 									if((Register[0x81]&0b100000)==0)
+									{
+									if(Register[1]==255)
+									{
+										Register[1]=0;
+										Register[0x0b]=bsf(Register[0x0b],2);
+										}
+									else
 										Register[1]++;
+									}
+										
 									System.out.println(w);
 									break;
 								default:
@@ -1110,11 +1175,27 @@ public class SimulationGui {
 							break;
 						}
 						if((Register[0x81]&0b100000)==0)
+						{
+						if(Register[1]==255)
+						{
+							Register[1]=0;
+							Register[0x0b]=bsf(Register[0x0b],2);
+							}
+						else
 							Register[1]++;
+						}
 					}else { Register[2]++;
 					System.out.println(w);
 					if((Register[0x81]&0b100000)==0)
+					{
+					if(Register[1]==255)
+					{
+						Register[1]=0;
+						Register[0x0b]=bsf(Register[0x0b],2);
+						}
+					else
 						Register[1]++;
+					}
 					}
 				}
 			}
