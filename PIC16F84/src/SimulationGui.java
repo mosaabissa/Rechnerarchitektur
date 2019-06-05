@@ -25,6 +25,7 @@ import java.awt.Component;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.JSpinner;
+import java.awt.Button;
 
 public class SimulationGui {
 
@@ -64,6 +65,8 @@ public class SimulationGui {
 	private JScrollPane scrollEEPROM;
 	public DefaultHighlighter highlighter;
 	public DefaultHighlighter.DefaultHighlightPainter painter;
+	private JTabbedPane tabbedPane_1;
+	private Button Step;
 
 	/**
 	 * Launch the application.
@@ -433,22 +436,25 @@ public class SimulationGui {
 					bank=Register[3]&0b100000;
 					//timer interrupt
 					//if(TMR0==255 && Register[1]==0)
-					if(Register[1]==255 && TMR0==0)	
+					if(Register[1]==255 && TMR0==0 && (Register[0x0b]&0xa0)==0xa0)	
 					{
 						//T0IF (bit 2 from INTCON) is set
 						Register[0x0b]=bsf(Register[0x0b],2);
-					}
-					if(RB0==0 && (Register[1]&1)==1)
-					{
 						adressStack[j]=programCounter;
 						j++;
 						currentLine=Register[4];
 					}
-					else if(RB0==1 && (Register[6]&1)==0)
-					{
-						programCounter=adressStack[j-1];
-						j--;
-					}
+					//if(RB0==0 && (Register[1]&1)==1)
+					//{
+					//	adressStack[j]=programCounter;
+					//	j++;
+					//	currentLine=Register[4];
+				//	}
+				//	else if(RB0==1 && (Register[6]&1)==0)
+					//{
+						//programCounter=adressStack[j-1];
+					//	j--;
+				//	}
 					else
 						currentLine=programLines[programCounter];
 					//TMR0=Register[1];
@@ -524,7 +530,7 @@ public class SimulationGui {
 							//first four digits
 							switch (currentLine & four) {
 							case 12288:
-								w=movlw(currentLine & (~four));
+								w=movlw(currentLine & (~six));
 								Register[2]++;
 								System.out.println(w);
 								break;
@@ -1185,6 +1191,12 @@ public class SimulationGui {
 								
 								
 								Register[address]=w;
+								if(address==10)
+								{
+									PCLATH=Register[0xa]&0b11111;
+									PCLATH=PCLATH<<8;
+									programCounter=programCounter|PCLATH;
+								}
 								Register[2]++;
 								System.out.println(w);
 								break;
@@ -1341,6 +1353,18 @@ public class SimulationGui {
 					Stack.setText(register);
 					//end stack
 					//end GUI
+					
+					if((Register[0x0b]&0b100)==0b100)
+						{
+						Register[0x0b]=bcf(Register[0x0b],2);
+						Register[0x0b]=bcf(Register[0x0b],5);
+						programCounter=adressStack[j-1];
+						Register[2]=programCounter&0xff;
+						Register[0xa]=programCounter&0x1f00;
+						Register[0xa]=Register[0xa]>>8;
+						PCLATH=Register[0xa]&0b11111;
+						j--;
+						}
 				}
 			}
 		});
@@ -1452,6 +1476,17 @@ public class SimulationGui {
 				
 				breakPoint = new JSpinner();
 				scrollPane_1.setViewportView(breakPoint);
+				
+				tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
+				frame.getContentPane().add(tabbedPane_1);
+				
+				Step = new Button("New button");
+				Step.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+					}
+				});
+				tabbedPane_1.addTab("New tab", null, Step, null);
 				frame.setVisible (true);
 				highlighter =  (DefaultHighlighter)lst.getHighlighter();
 				painter = new DefaultHighlighter.DefaultHighlightPainter( Color.RED );

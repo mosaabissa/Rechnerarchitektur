@@ -7,7 +7,7 @@ public class Parser {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
 		
-		File file = new File("F:\\\\TPicSim2.LST"); 
+		File file = new File("F:\\\\TPicSim8.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
 		String empty="         ";
@@ -81,13 +81,9 @@ public class Parser {
 		//RP0 5 bit in statues register
 		int bank=0;
 		int PCLATH=0;
-		while(0==0)
+		while(Register[2]<33)
 		{
-			try {
-	            Thread.sleep(2000);
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
+			
 			//program counter
 			
 			if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
@@ -152,6 +148,16 @@ public class Parser {
 					programCounter=programCounter|PCLATH;
 					Register[2]=programCounter&0xff;
 					System.out.println(w);
+					if((Register[0x81]&0b100000)==0)
+					{
+					if(TMR0==255)
+						{
+						TMR0=0;
+						Register[0x0b]=bsf(Register[0x0b],2);
+						}
+					else
+						TMR0++;
+					}
 					break;
 				case 10240:
 					//goto
@@ -161,13 +167,23 @@ public class Parser {
 					programCounter=programCounter|PCLATH;
 					Register[2]=programCounter&0xff;
 					//System.out.println(w);
+					if((Register[0x81]&0b100000)==0)
+					{
+					if(TMR0==255)
+					{
+						TMR0=0;
+						Register[0x0b]=bsf(Register[0x0b],2);
+						}
+					else
+						TMR0++;
+					}
 					break;
 
 				default:
 					//first four digits
 					switch (currentLine & four) {
 					case 12288:
-						w=movlw(currentLine & (~four));
+						w=movlw(currentLine & (~six));
 						Register[2]++;
 						System.out.println(w);
 						break;
@@ -181,6 +197,16 @@ public class Parser {
 						PCLATH=Register[0xa]&0b11111;
 						j--;
 						System.out.println(w);
+						if((Register[0x81]&0b100000)==0)
+						{
+						if(TMR0==255)
+						{
+							TMR0=0;
+							Register[0x0b]=bsf(Register[0x0b],2);
+							}
+						else
+							TMR0++;
+						}
 						break;
 					case 0x1400:
 						//bsf
@@ -190,6 +216,9 @@ public class Parser {
 		address=currentLine&(~seven);
 		if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 			address=address|0x80;
+		if(address==0)
+			address=Register[4];
+		
 		
 		Register[address]=bsf(Register[address],b);
 		System.out.println(w);
@@ -202,6 +231,9 @@ public class Parser {
 			address=currentLine&(~seven);
 			if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 				address=address|0x80;
+			if(address==0)
+				address=Register[4];
+			
 			Register[address]=bcf(Register[address],testLine);
 			System.out.println(w);
 			Register[2]++;
@@ -213,13 +245,27 @@ public class Parser {
 			address=currentLine&(~seven);
 			if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 				address=address|0x80;
+			if(address==0)
+				address=Register[4];
 			
 			testLine = currentLine&0x0380;
 			testLine=testLine>>7;
 			testLine2= Register[address];
 			testLine2=testLine2>>testLine;
 			if(testLine2%2==0)
-				Register[2]=Register[2]+2;
+				{
+					Register[2]=Register[2]+2;
+					if((Register[0x81]&0b100000)==0)
+					{
+					if(TMR0==255)
+					{
+						TMR0=0;
+						Register[0x0b]=bsf(Register[0x0b],2);
+						}
+					else
+						TMR0++;
+					}
+				}
 			else
 				Register[2]++;
 
@@ -233,13 +279,28 @@ public class Parser {
 			address=currentLine&(~seven);
 			if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 				address=address|0x80;
+			if(address==0)
+				address=Register[4];
+			
 			
 			testLine = currentLine&0x0380;
 			testLine=testLine>>7;
 			testLine2= Register[address];
 			testLine2=testLine2>>testLine;
 			if(testLine2%2==1)
-				Register[2]=Register[2]+2;
+				{
+					Register[2]=Register[2]+2;
+					if((Register[0x81]&0b100000)==0)
+					{
+					if(TMR0==255)
+					{
+						TMR0=0;
+						Register[0x0b]=bsf(Register[0x0b],2);
+						}
+					else
+						TMR0++;
+					}
+				}
 			else
 				Register[2]++;
 
@@ -326,6 +387,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					
 					
 					testLine=Register[address]+w;
@@ -368,6 +432,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					//Z flag
 					if ((Register[address]&w)==0)
 						Register[3]=bsf(Register[3],2);
@@ -389,6 +456,8 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
 					
 					//Z flag
 					if((~Register[address])==0)
@@ -412,6 +481,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					//Z flag
 					if(Register[address]-1==0)
 						Register[3]=bsf(Register[3],2);
@@ -440,9 +512,10 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
 					
-					if (Register[currentLine
-							& (~seven)]+1 <= 0xff) {
+					if (Register[address]+1 <= 0xff) {
 						Register[3]=bcf(Register[3],2);
 						if ((currentLine & (~six)) > 127)
 							Register[address] = Register[address] + 1;
@@ -469,6 +542,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					//Z flag
 					if(Register[address]==0)
 						Register[3]=bsf(Register[3],2);
@@ -490,6 +566,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					//Z flag
 					if((Register[address] | w)==0)
 						Register[3]=bsf(Register[3],2);
@@ -508,11 +587,14 @@ public class Parser {
 				case 512:
 					 
 						//subwf
-						//TODO make sure normal subtraction is ok
+						//TODO c flag
 						//bank check
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
+							
 							
 						 testLine=Register[address] - w;
 						 Register[3]=bcf(Register[3],0);
@@ -544,6 +626,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+				
 
 					if((currentLine & (~six))>127)
 						Register[address]=swapf(Register[address]);
@@ -560,6 +645,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					//Z flag
 					if((Register[address]^w)==0)
 						Register[3]=bsf(Register[3],2);
@@ -582,25 +670,29 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 
-					if((currentLine & (~six))>127)
+					//if((currentLine & (~six))>127)
 						//Register[address]=rrf(Register[address]);
 						
 						testLine=Register[3]&1;
 					testLine2=Register[address];
 					if(testLine2>127)
 						Register[3]=bsf(Register[3],0);
+					else
+						Register[3]=bcf(Register[3],0);
 						
 					testLine2=testLine2<<1;
 					testLine2=testLine2&0xff;
 
 					if(testLine==1)
-						testLine2=testLine2+1;
+						testLine2=testLine2|1;
 
 
 					if ((currentLine & (~six)) > 127)
-						Register[currentLine
-								& (~seven)] = testLine2;
+						Register[address] = testLine2;
 
 					else
 						w = testLine2;
@@ -614,22 +706,26 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
-
-					if((currentLine & (~six))>127)
-						//Register[address]=rrf(Register[address]);
+					if(address==0)
+						address=Register[4];
+					
+					//if((currentLine & (~six))>127)
 						testLine=Register[3]&1;
+					//Register[address]=rrf(Register[address]);
 					testLine2=Register[address];
 					if(testLine2%2==1)
 						Register[3]=bsf(Register[3],0);
+					else
+						Register[3]=bcf(Register[3],0);
 					testLine2=testLine2>>1;
 
 					if(testLine==1)
-						testLine2=testLine2+0x80;
+						testLine2=testLine2|0x80;
+					
 
 
 					if ((currentLine & (~six)) > 127)
-						Register[currentLine
-								& (~seven)] = testLine2;
+						Register[address] = testLine2;
 
 					else
 						w = testLine2;
@@ -643,6 +739,9 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
+					
 					testLine=Register[currentLine
 							& (~seven)];
 					
@@ -654,7 +753,19 @@ public class Parser {
 					if (testLine!=0) 
 						Register[2]++;
 					else
-						Register[2]=Register[2]+2;
+						{
+							Register[2]=Register[2]+2;
+							if((Register[0x81]&0b100000)==0)
+							{
+							if(TMR0==255)
+							{
+								TMR0=0;
+								Register[0x0b]=bsf(Register[0x0b],2);
+								}
+							else
+								TMR0++;
+							}
+						}
 					
 					
 					
@@ -680,6 +791,8 @@ public class Parser {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
 					
 					testLine=Register[currentLine
 							& (~seven)];
@@ -701,7 +814,19 @@ public class Parser {
 					if (testLine!=0) 
 						Register[2]++;
 					else
-						Register[2]=Register[2]+2;
+						{
+							Register[2]=Register[2]+2;
+							if((Register[0x81]&0b100000)==0)
+								{
+								if(TMR0==255)
+								{
+									TMR0=0;
+									Register[0x0b]=bsf(Register[0x0b],2);
+									}
+								else
+									TMR0++;
+								}
+						}
 
 					System.out.println(w);
 
@@ -714,6 +839,9 @@ public class Parser {
 						address=currentLine&(~seven);
 						if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 							address=address|0x80;
+						if(address==0)
+							address=Register[4];
+						
 						
 						Register[address]=w;
 						Register[2]++;
@@ -726,6 +854,9 @@ public class Parser {
 						address=currentLine&(~seven);
 						if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 							address=address|0x80;
+						if(address==0)
+							address=Register[4];
+						
 						Register[address]=0;
 						//Z flag
 							Register[3]=bsf(Register[3],2);
@@ -752,8 +883,18 @@ public class Parser {
 							Register[0xa]=Register[0xa]>>8;
 							PCLATH=Register[0xa]&0b11111;
 							j--;
+							if((Register[0x81]&0b100000)==0)
+							{
+							if(TMR0==255)
+							{
+								TMR0=0;
+								Register[0x0b]=bsf(Register[0x0b],2);
+								}
+							else
+								TMR0++;
+							}
+								
 							System.out.println(w);
-							
 							break;
 						default:
 							break;
