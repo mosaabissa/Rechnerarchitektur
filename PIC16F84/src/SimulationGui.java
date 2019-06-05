@@ -546,6 +546,8 @@ public class SimulationGui {
 					address=address|0x80;
 				if(address==0)
 					address=Register[4];
+				if(address==1)
+					Register[1]=Register[1]-3;
 				
 				Register[address]=bsf(Register[address],b);
 				System.out.println(w);
@@ -560,6 +562,8 @@ public class SimulationGui {
 						address=address|0x80;
 					if(address==0)
 						address=Register[4];
+					if(address==1)
+						Register[1]=Register[1]-3;
 					Register[address]=bcf(Register[address],testLine);
 					System.out.println(w);
 					Register[2]++;
@@ -573,6 +577,8 @@ public class SimulationGui {
 						address=address|0x80;
 					if(address==0)
 						address=Register[4];
+					if(address==1)
+						Register[1]=Register[1]-3;
 					testLine = currentLine&0x0380;
 					testLine=testLine>>7;
 					testLine2= Register[address];
@@ -606,6 +612,8 @@ public class SimulationGui {
 						address=address|0x80;
 					if(address==0)
 						address=Register[4];
+					if(address==1)
+						Register[1]=Register[1]-3;
 					
 					testLine = currentLine&0x0380;
 					testLine=testLine>>7;
@@ -713,6 +721,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							
 							
 							testLine=Register[address]+w;
@@ -757,6 +767,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							//Z flag
 							if ((Register[address]&w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -780,6 +792,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							//Z flag
 							if((~Register[address])==0)
 								Register[3]=bsf(Register[3],2);
@@ -804,6 +818,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							//Z flag
 							if(Register[address]-1==0)
 								Register[3]=bsf(Register[3],2);
@@ -834,8 +850,9 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if (Register[currentLine
-									& (~seven)]+1 <= 0xff) {
+							if(address==1)
+								Register[1]=Register[1]-3;
+							if (Register[address]+1 <= 0xff) {
 								Register[3]=bcf(Register[3],2);
 								if ((currentLine & (~six)) > 127)
 									Register[address] = Register[address] + 1;
@@ -864,6 +881,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							//Z flag
 							if(Register[address]==0)
 								Register[3]=bsf(Register[3],2);
@@ -887,6 +906,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							//Z flag
 							if((Register[address] | w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -912,6 +933,8 @@ public class SimulationGui {
 										address=address|0x80;
 									if(address==0)
 										address=Register[4];
+									if(address==1)
+										Register[1]=Register[1]-3;
 									
 								 testLine=Register[address] - w;
 								 Register[3]=bcf(Register[3],0);
@@ -945,6 +968,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 
 							if((currentLine & (~six))>127)
 								Register[address]=swapf(Register[address]);
@@ -963,6 +988,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							//Z flag
 							if((Register[address]^w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -987,8 +1014,10 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 
-							if((currentLine & (~six))>127)
+							//if((currentLine & (~six))>127)
 								//Register[address]=rrf(Register[address]);
 								
 								testLine=Register[3]&1;
@@ -1002,12 +1031,11 @@ public class SimulationGui {
 							testLine2=testLine2&0xff;
 
 							if(testLine==1)
-								testLine2=testLine2+1;
+								testLine2=testLine2|1;
 
 
 							if ((currentLine & (~six)) > 127)
-								Register[currentLine
-										& (~seven)] = testLine2;
+								Register[address] = testLine2;
 
 							else
 								w = testLine2;
@@ -1023,9 +1051,11 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if((currentLine & (~six))>127)
-								//Register[address]=rrf(Register[address]);
+							if(address==1)
+								Register[1]=Register[1]-3;
+							//if((currentLine & (~six))>127)
 								testLine=Register[3]&1;
+							//Register[address]=rrf(Register[address]);
 							testLine2=Register[address];
 							if(testLine2%2==1)
 								Register[3]=bsf(Register[3],0);
@@ -1034,12 +1064,12 @@ public class SimulationGui {
 							testLine2=testLine2>>1;
 
 							if(testLine==1)
-								testLine2=testLine2+0x80;
+								testLine2=testLine2|0x80;
+							
 
 
 							if ((currentLine & (~six)) > 127)
-								Register[currentLine
-										& (~seven)] = testLine2;
+								Register[address] = testLine2;
 
 							else
 								w = testLine2;
@@ -1055,6 +1085,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							testLine=Register[currentLine
 									& (~seven)];
 							
@@ -1106,6 +1138,8 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
+							if(address==1)
+								Register[1]=Register[1]-3;
 							testLine=Register[currentLine
 									& (~seven)];
 							if(testLine+1>255)
@@ -1153,6 +1187,8 @@ public class SimulationGui {
 									address=address|0x80;
 								if(address==0)
 									address=Register[4];
+								if(address==1)
+									Register[1]=Register[1]-3;
 								
 								Register[address]=w;
 								Register[2]++;
@@ -1167,6 +1203,8 @@ public class SimulationGui {
 									address=address|0x80;
 								if(address==0)
 									address=Register[4];
+								if(address==1)
+									Register[1]=Register[1]-3;
 								Register[address]=0;
 								//Z flag
 									Register[3]=bsf(Register[3],2);
