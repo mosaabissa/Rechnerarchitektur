@@ -350,7 +350,7 @@ public class SimulationGui {
 				} catch ( java.text.ParseException e ) {  }
 				int value = (Integer) breakPoint.getValue();
 				Register[0x81]=0xff;
-				while(programCounter<value)
+				while(Register[2]<value)
 				{
 					
 					
@@ -544,6 +544,8 @@ public class SimulationGui {
 				address=currentLine&(~seven);
 				if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 					address=address|0x80;
+				if(address==0)
+					address=Register[4];
 				
 				Register[address]=bsf(Register[address],b);
 				System.out.println(w);
@@ -556,6 +558,8 @@ public class SimulationGui {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
 					Register[address]=bcf(Register[address],testLine);
 					System.out.println(w);
 					Register[2]++;
@@ -567,7 +571,8 @@ public class SimulationGui {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
-					
+					if(address==0)
+						address=Register[4];
 					testLine = currentLine&0x0380;
 					testLine=testLine>>7;
 					testLine2= Register[address];
@@ -599,6 +604,8 @@ public class SimulationGui {
 					address=currentLine&(~seven);
 					if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 						address=address|0x80;
+					if(address==0)
+						address=Register[4];
 					
 					testLine = currentLine&0x0380;
 					testLine=testLine>>7;
@@ -704,6 +711,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							
 							
 							testLine=Register[address]+w;
@@ -746,6 +755,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							//Z flag
 							if ((Register[address]&w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -767,7 +778,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
-							
+							if(address==0)
+								address=Register[4];
 							//Z flag
 							if((~Register[address])==0)
 								Register[3]=bsf(Register[3],2);
@@ -790,6 +802,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							//Z flag
 							if(Register[address]-1==0)
 								Register[3]=bsf(Register[3],2);
@@ -818,7 +832,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
-							
+							if(address==0)
+								address=Register[4];
 							if (Register[currentLine
 									& (~seven)]+1 <= 0xff) {
 								Register[3]=bcf(Register[3],2);
@@ -847,6 +862,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							//Z flag
 							if(Register[address]==0)
 								Register[3]=bsf(Register[3],2);
@@ -868,6 +885,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							//Z flag
 							if((Register[address] | w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -886,11 +905,13 @@ public class SimulationGui {
 						case 512:
 							 
 								//subwf
-								//TODO make sure normal subtraction is ok
+								//TODO c flag
 								//bank check
 									address=currentLine&(~seven);
 									if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 										address=address|0x80;
+									if(address==0)
+										address=Register[4];
 									
 								 testLine=Register[address] - w;
 								 Register[3]=bcf(Register[3],0);
@@ -922,6 +943,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 
 							if((currentLine & (~six))>127)
 								Register[address]=swapf(Register[address]);
@@ -938,6 +961,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							//Z flag
 							if((Register[address]^w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -960,6 +985,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 
 							if((currentLine & (~six))>127)
 								//Register[address]=rrf(Register[address]);
@@ -968,6 +995,8 @@ public class SimulationGui {
 							testLine2=Register[address];
 							if(testLine2>127)
 								Register[3]=bsf(Register[3],0);
+							else
+								Register[3]=bcf(Register[3],0);
 								
 							testLine2=testLine2<<1;
 							testLine2=testLine2&0xff;
@@ -992,13 +1021,16 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
-
+							if(address==0)
+								address=Register[4];
 							if((currentLine & (~six))>127)
 								//Register[address]=rrf(Register[address]);
 								testLine=Register[3]&1;
 							testLine2=Register[address];
 							if(testLine2%2==1)
 								Register[3]=bsf(Register[3],0);
+							else
+								Register[3]=bcf(Register[3],0);
 							testLine2=testLine2>>1;
 
 							if(testLine==1)
@@ -1021,6 +1053,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
+							if(address==0)
+								address=Register[4];
 							testLine=Register[currentLine
 									& (~seven)];
 							
@@ -1070,7 +1104,8 @@ public class SimulationGui {
 							address=currentLine&(~seven);
 							if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 								address=address|0x80;
-							
+							if(address==0)
+								address=Register[4];
 							testLine=Register[currentLine
 									& (~seven)];
 							if(testLine+1>255)
@@ -1116,6 +1151,8 @@ public class SimulationGui {
 								address=currentLine&(~seven);
 								if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 									address=address|0x80;
+								if(address==0)
+									address=Register[4];
 								
 								Register[address]=w;
 								Register[2]++;
@@ -1128,6 +1165,8 @@ public class SimulationGui {
 								address=currentLine&(~seven);
 								if(bank!=0 &&(address==1 || address==5 || address==6 || address==8 || address==9))
 									address=address|0x80;
+								if(address==0)
+									address=Register[4];
 								Register[address]=0;
 								//Z flag
 									Register[3]=bsf(Register[3],2);
@@ -1203,6 +1242,64 @@ public class SimulationGui {
 						Register[1]++;
 					}
 					}
+					//GUI
+					//highlight
+					try
+			        {
+						highlighter.removeAllHighlights();
+			            int start =  lst.getLineStartOffset(programCounter);
+			            int end =    lst.getLineEndOffset(programCounter);
+			            highlighter.addHighlight(start, end, painter );
+			            
+			        }
+			        catch(Exception e)
+			        {
+			            System.out.println(e);
+			        }
+					//end highlight
+					//registerTextArea.setText("test");
+					//getRegisterTextArea().append("ur text");
+					//registerTextArea.setText(Register.toString());
+					register="";
+					for(int aa=0;aa<256;aa++)
+						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+					
+					registerTextArea.setText(register);
+					//SFR
+					register="";
+					register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+					register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+					register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+					register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+					register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+					register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+					register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+					register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+					register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+					register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+					register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+					register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+					register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+					register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+					register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+					register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+					SFR.setText(register);
+					//end SFR	
+					//GPR
+					register="";
+					for(int aa=12;aa<80;aa++)
+						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+					
+					GPR.setText(register);
+					//end GPR
+					//stack
+					register="";
+					for(int aa=0;aa<j;aa++)
+						register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+					
+					Stack.setText(register);
+					//end stack
+					//end GUI
 				}
 			}
 		});
