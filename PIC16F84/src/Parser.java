@@ -6,6 +6,7 @@ public class Parser {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		//setting up the file(change the disk name accordingly)
+		
 		File file = new File("F:\\\\TPicSim2.LST"); 
 		Scanner sc = new Scanner(file);
 		String[] line=new String[1000];
@@ -82,6 +83,11 @@ public class Parser {
 		int PCLATH=0;
 		while(0==0)
 		{
+			try {
+	            Thread.sleep(2000);
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
 			//program counter
 			
 			if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
