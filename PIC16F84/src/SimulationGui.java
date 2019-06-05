@@ -141,7 +141,7 @@ public class SimulationGui {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JButton btnPlay = new JButton("Play");
+		JButton btnPlay = new JButton("step");
 		btnPlay.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -180,9 +180,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[5]&0b100)==0)
-							bsf(Register[5],2);
+							Register[5]=bsf(Register[5],2);
 						else
-							bcf(Register[5],2);
+							Register[5]=bcf(Register[5],2);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin1
@@ -193,14 +242,63 @@ public class SimulationGui {
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[5]&0b1000)==0)
 							{
-								bsf(Register[5],3);
+							Register[5]=bsf(Register[5],3);
 								if((Register[0x81]&0b10000)==0)
 									Register[1]++;
 							}
 						else
-							bcf(Register[5],3);
+							Register[5]=bcf(Register[5],3);
 						if((Register[0x81]&0b10000)==0b10000)
 							Register[1]++;
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin2
@@ -209,9 +307,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[5]&0b1000)==0)
-							bsf(Register[5],3);
+							Register[5]=bsf(Register[5],3);
 						else
-							bcf(Register[5],3);
+							Register[5]=bcf(Register[5],3);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin3
@@ -220,9 +367,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b1)==0)
-							bsf(Register[6],0);
+							Register[6]=bsf(Register[6],0);
 						else
-							bcf(Register[6],0);
+							Register[6]=bcf(Register[6],0);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin6
@@ -231,9 +427,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b10)==0)
-							bsf(Register[6],1);
+							Register[6]=bsf(Register[6],1);
 						else
-							bcf(Register[6],1);
+							Register[6]=bcf(Register[6],1);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin7
@@ -242,31 +487,178 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b100)==0)
-							bsf(Register[6],2);
+							Register[6]=bsf(Register[6],2);
 						else
-							bcf(Register[6],2);
+							Register[6]=bcf(Register[6],2);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin8
 				//pin9
-				btnPin_6.addMouseListener(new MouseAdapter() {
+				btnPin_9.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b1000)==0)
-							bsf(Register[6],3);
+							Register[6]=bsf(Register[6],3);
 						else
-							bcf(Register[6],3);
+							Register[6]=bcf(Register[6],3);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin9
 				//pin10
-				btnPin_6.addMouseListener(new MouseAdapter() {
+				btnPin_10.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b10000)==0)
-							bsf(Register[6],4);
+							Register[6]=bsf(Register[6],4);
 						else
-							bcf(Register[6],4);
+							Register[6]=bcf(Register[6],4);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin10
@@ -275,9 +667,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b100000)==0)
-							bsf(Register[6],5);
+							Register[6]=bsf(Register[6],5);
 						else
-							bcf(Register[6],5);
+							Register[6]=bcf(Register[6],5);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin11
@@ -286,9 +727,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b1000000)==0)
-							bsf(Register[6],6);
+							Register[6]=bsf(Register[6],6);
 						else
-							bcf(Register[6],6);
+							Register[6]=bcf(Register[6],6);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin12
@@ -297,9 +787,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[6]&0b10000000)==0)
-							bsf(Register[6],7);
+							Register[6]=bsf(Register[6],7);
 						else
-							bcf(Register[6],7);
+							Register[6]=bcf(Register[6],7);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin13
@@ -308,9 +847,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[5]&1)==0)
-							bsf(Register[5],0);
+							Register[5]=bsf(Register[5],0);
 						else
-							bcf(Register[5],0);
+							Register[5]=bcf(Register[5],0);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin17
@@ -319,9 +907,58 @@ public class SimulationGui {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
 						if((Register[5]&0b10)==0)
-							bsf(Register[5],1);
+							Register[5]=bsf(Register[5],1);
 						else
-							bcf(Register[5],1);
+							Register[5]=bcf(Register[5],1);
+						String register="";
+						for(int aa=0;aa<256;aa++)
+							{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						registerTextArea.setText(register);
+						//SFR
+						register="";
+						register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+						register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+						register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+						register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+						register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+						register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+						register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+						register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+						register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+						register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+						register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+						register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+						register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+						register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+						register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+						register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+						SFR.setText(register);
+						//end SFR	
+						//GPR
+						register="";
+						for(int aa=12;aa<80;aa++)
+						{
+							if(Register[aa]<0 && aa==1)
+								register=register+Integer.toString(aa)+"  0\n";
+							else
+								register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+							}
+						
+						GPR.setText(register);
+						//end GPR
+						//stack
+						register="";
+						for(int aa=0;aa<j;aa++)
+							register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+						
+						Stack.setText(register);
+						//end stack
 					}
 				});
 				//end pin18
@@ -1507,7 +2144,7 @@ public class SimulationGui {
 				tabbedPane_1 = new JTabbedPane(JTabbedPane.TOP);
 				frame.getContentPane().add(tabbedPane_1);
 				
-				Step = new Button("New button");
+				Step = new Button("play");
 				Step.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent arg0) {
@@ -1546,9 +2183,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[5]&0b100)==0)
-									bsf(Register[5],2);
+									Register[5]=bsf(Register[5],2);
 								else
-									bcf(Register[5],2);
+									Register[5]=bcf(Register[5],2);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin1
@@ -1559,14 +2245,63 @@ public class SimulationGui {
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[5]&0b1000)==0)
 									{
-										bsf(Register[5],3);
+									Register[5]=bsf(Register[5],3);
 										if((Register[0x81]&0b10000)==0)
 											Register[1]++;
 									}
 								else
-									bcf(Register[5],3);
+									Register[5]=bcf(Register[5],3);
 								if((Register[0x81]&0b10000)==0b10000)
 									Register[1]++;
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin2
@@ -1575,9 +2310,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[5]&0b1000)==0)
-									bsf(Register[5],3);
+									Register[5]=bsf(Register[5],3);
 								else
-									bcf(Register[5],3);
+									Register[5]=bcf(Register[5],3);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin3
@@ -1586,9 +2370,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b1)==0)
-									bsf(Register[6],0);
+									Register[6]=bsf(Register[6],0);
 								else
-									bcf(Register[6],0);
+									Register[6]=bcf(Register[6],0);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin6
@@ -1597,9 +2430,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b10)==0)
-									bsf(Register[6],1);
+									Register[6]=bsf(Register[6],1);
 								else
-									bcf(Register[6],1);
+									Register[6]=bcf(Register[6],1);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin7
@@ -1608,31 +2490,178 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b100)==0)
-									bsf(Register[6],2);
+									Register[6]=bsf(Register[6],2);
 								else
-									bcf(Register[6],2);
+									Register[6]=bcf(Register[6],2);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin8
 						//pin9
-						btnPin_6.addMouseListener(new MouseAdapter() {
+						btnPin_9.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b1000)==0)
-									bsf(Register[6],3);
+									Register[6]=bsf(Register[6],3);
 								else
-									bcf(Register[6],3);
+									Register[6]=bcf(Register[6],3);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin9
 						//pin10
-						btnPin_6.addMouseListener(new MouseAdapter() {
+						btnPin_10.addMouseListener(new MouseAdapter() {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b10000)==0)
-									bsf(Register[6],4);
+									Register[6]=bsf(Register[6],4);
 								else
-									bcf(Register[6],4);
+									Register[6]=bcf(Register[6],4);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin10
@@ -1641,9 +2670,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b100000)==0)
-									bsf(Register[6],5);
+									Register[6]=bsf(Register[6],5);
 								else
-									bcf(Register[6],5);
+									Register[6]=bcf(Register[6],5);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin11
@@ -1652,9 +2730,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b1000000)==0)
-									bsf(Register[6],6);
+									Register[6]=bsf(Register[6],6);
 								else
-									bcf(Register[6],6);
+									Register[6]=bcf(Register[6],6);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin12
@@ -1663,9 +2790,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[6]&0b10000000)==0)
-									bsf(Register[6],7);
+									Register[6]=bsf(Register[6],7);
 								else
-									bcf(Register[6],7);
+									Register[6]=bcf(Register[6],7);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin13
@@ -1674,9 +2850,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[5]&1)==0)
-									bsf(Register[5],0);
+									Register[5]=bsf(Register[5],0);
 								else
-									bcf(Register[5],0);
+									Register[5]=bcf(Register[5],0);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin17
@@ -1685,9 +2910,58 @@ public class SimulationGui {
 							@Override
 							public void mouseClicked(MouseEvent arg0) {
 								if((Register[5]&0b10)==0)
-									bsf(Register[5],1);
+									Register[5]=bsf(Register[5],1);
 								else
-									bcf(Register[5],1);
+									Register[5]=bcf(Register[5],1);
+								String register="";
+								for(int aa=0;aa<256;aa++)
+									{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								registerTextArea.setText(register);
+								//SFR
+								register="";
+								register=register+"0 Indirect add "+Integer.toString(Register[0])+"\n";
+								register=register+"1 TMR0         "+Integer.toString(Register[1])+"\n";
+								register=register+"2 PCL          "+Integer.toString(Register[2])+"\n";
+								register=register+"3 Status       "+Integer.toString(Register[3])+"\n";
+								register=register+"4 FSR          "+Integer.toString(Register[4])+"\n";
+								register=register+"5 Port A       "+Integer.toString(Register[5])+"\n";
+								register=register+"6 Port B       "+Integer.toString(Register[6])+"\n";
+								register=register+"8 EEDATA       "+Integer.toString(Register[8])+"\n";
+								register=register+"9 EEADR        "+Integer.toString(Register[9])+"\n";
+								register=register+"A PCLATH       "+Integer.toString(Register[0xa])+"\n";
+								register=register+"B INTCON       "+Integer.toString(Register[0xb])+"\n";
+								register=register+"81 Option      "+Integer.toString(Register[0x81])+"\n";
+								register=register+"85 TRISA       "+Integer.toString(Register[0x85])+"\n";
+								register=register+"86 TRISB       "+Integer.toString(Register[0x86])+"\n";
+								register=register+"88 EECON1      "+Integer.toString(Register[0x88])+"\n";
+								register=register+"89 EECON2      "+Integer.toString(Register[0x89])+"\n";
+								SFR.setText(register);
+								//end SFR	
+								//GPR
+								register="";
+								for(int aa=12;aa<80;aa++)
+								{
+									if(Register[aa]<0 && aa==1)
+										register=register+Integer.toString(aa)+"  0\n";
+									else
+										register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+									}
+								
+								GPR.setText(register);
+								//end GPR
+								//stack
+								register="";
+								for(int aa=0;aa<j;aa++)
+									register=register+Integer.toString(aa)+"  "+Integer.toString(adressStack[aa])+"\n";
+								
+								Stack.setText(register);
+								//end stack
 							}
 						});
 						//end pin18
