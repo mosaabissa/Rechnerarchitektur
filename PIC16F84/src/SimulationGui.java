@@ -332,7 +332,7 @@ public class SimulationGui {
 				//TODO implement flags
 				int currentLine=programLines[programCounter];
 				//timer variable
-				int TMR0=0;
+				double TMR0=0;
 				//RB0 bit number 0 in PORTB (06h)
 				int RB0=0;
 				//RP0 5 bit in statues register
@@ -374,8 +374,14 @@ public class SimulationGui {
 					//registerTextArea.setText(Register.toString());
 					String register="";
 					for(int aa=0;aa<256;aa++)
-						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
-					
+					{
+						
+							
+						if(Register[aa]<0 && aa==1)
+							register=register+Integer.toString(aa)+"  0\n";
+						else
+							register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+					}
 					registerTextArea.setText(register);
 					//SFR
 					register="";
@@ -400,7 +406,12 @@ public class SimulationGui {
 					//GPR
 					register="";
 					for(int aa=12;aa<80;aa++)
-						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+					{
+						if(Register[aa]<0 && aa==1)
+							register=register+Integer.toString(aa)+"  0\n";
+						else
+							register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+						}
 					
 					GPR.setText(register);
 					//end GPR
@@ -421,7 +432,8 @@ public class SimulationGui {
 					//end program counter
 					bank=Register[3]&0b100000;
 					//timer interrupt
-					if(TMR0==255 && Register[1]==0)
+					//if(TMR0==255 && Register[1]==0)
+					if(Register[1]==255 && TMR0==0)	
 					{
 						//T0IF (bit 2 from INTCON) is set
 						Register[0x0b]=bsf(Register[0x0b],2);
@@ -439,7 +451,8 @@ public class SimulationGui {
 					}
 					else
 						currentLine=programLines[programCounter];
-					TMR0=Register[1];
+					//TMR0=Register[1];
+					Register[1]=(int)TMR0;
 					RB0=Register[0x06]&1;
 					//end of timer interrupt
 					//EEPROM
@@ -478,13 +491,13 @@ public class SimulationGui {
 							System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
 							{
-							if(Register[1]==255)
+							if(TMR0==255)
 								{
-								Register[1]=0;
+								TMR0=0;
 								Register[0x0b]=bsf(Register[0x0b],2);
 								}
 							else
-								Register[1]++;
+								TMR0++;
 							}
 							break;
 						case 10240:
@@ -497,13 +510,13 @@ public class SimulationGui {
 							//System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
 							{
-							if(Register[1]==255)
+							if(TMR0==255)
 							{
-								Register[1]=0;
+								TMR0=0;
 								Register[0x0b]=bsf(Register[0x0b],2);
 								}
 							else
-								Register[1]++;
+								TMR0++;
 							}
 							break;
 
@@ -527,13 +540,13 @@ public class SimulationGui {
 								System.out.println(w);
 								if((Register[0x81]&0b100000)==0)
 								{
-								if(Register[1]==255)
+								if(TMR0==255)
 								{
-									Register[1]=0;
+									TMR0=0;
 									Register[0x0b]=bsf(Register[0x0b],2);
 									}
 								else
-									Register[1]++;
+									TMR0++;
 								}
 								break;
 							case 0x1400:
@@ -546,8 +559,7 @@ public class SimulationGui {
 					address=address|0x80;
 				if(address==0)
 					address=Register[4];
-				if(address==1)
-					Register[1]=Register[1]-3;
+				
 				
 				Register[address]=bsf(Register[address],b);
 				System.out.println(w);
@@ -562,8 +574,7 @@ public class SimulationGui {
 						address=address|0x80;
 					if(address==0)
 						address=Register[4];
-					if(address==1)
-						Register[1]=Register[1]-3;
+					
 					Register[address]=bcf(Register[address],testLine);
 					System.out.println(w);
 					Register[2]++;
@@ -577,8 +588,7 @@ public class SimulationGui {
 						address=address|0x80;
 					if(address==0)
 						address=Register[4];
-					if(address==1)
-						Register[1]=Register[1]-3;
+					
 					testLine = currentLine&0x0380;
 					testLine=testLine>>7;
 					testLine2= Register[address];
@@ -588,13 +598,13 @@ public class SimulationGui {
 							Register[2]=Register[2]+2;
 							if((Register[0x81]&0b100000)==0)
 							{
-							if(Register[1]==255)
+							if(TMR0==255)
 							{
-								Register[1]=0;
+								TMR0=0;
 								Register[0x0b]=bsf(Register[0x0b],2);
 								}
 							else
-								Register[1]++;
+								TMR0++;
 							}
 						}
 					else
@@ -612,8 +622,7 @@ public class SimulationGui {
 						address=address|0x80;
 					if(address==0)
 						address=Register[4];
-					if(address==1)
-						Register[1]=Register[1]-3;
+					
 					
 					testLine = currentLine&0x0380;
 					testLine=testLine>>7;
@@ -624,13 +633,13 @@ public class SimulationGui {
 							Register[2]=Register[2]+2;
 							if((Register[0x81]&0b100000)==0)
 							{
-							if(Register[1]==255)
+							if(TMR0==255)
 							{
-								Register[1]=0;
+								TMR0=0;
 								Register[0x0b]=bsf(Register[0x0b],2);
 								}
 							else
-								Register[1]++;
+								TMR0++;
 							}
 						}
 					else
@@ -721,8 +730,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							
 							
 							testLine=Register[address]+w;
@@ -767,8 +775,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//Z flag
 							if ((Register[address]&w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -792,8 +799,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//Z flag
 							if((~Register[address])==0)
 								Register[3]=bsf(Register[3],2);
@@ -818,8 +824,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//Z flag
 							if(Register[address]-1==0)
 								Register[3]=bsf(Register[3],2);
@@ -850,8 +855,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							if (Register[address]+1 <= 0xff) {
 								Register[3]=bcf(Register[3],2);
 								if ((currentLine & (~six)) > 127)
@@ -881,8 +885,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//Z flag
 							if(Register[address]==0)
 								Register[3]=bsf(Register[3],2);
@@ -906,8 +909,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//Z flag
 							if((Register[address] | w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -933,8 +935,7 @@ public class SimulationGui {
 										address=address|0x80;
 									if(address==0)
 										address=Register[4];
-									if(address==1)
-										Register[1]=Register[1]-3;
+									
 									
 								 testLine=Register[address] - w;
 								 Register[3]=bcf(Register[3],0);
@@ -968,8 +969,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+						
 
 							if((currentLine & (~six))>127)
 								Register[address]=swapf(Register[address]);
@@ -988,8 +988,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//Z flag
 							if((Register[address]^w)==0)
 								Register[3]=bsf(Register[3],2);
@@ -1014,8 +1013,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 
 							//if((currentLine & (~six))>127)
 								//Register[address]=rrf(Register[address]);
@@ -1051,8 +1049,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							//if((currentLine & (~six))>127)
 								testLine=Register[3]&1;
 							//Register[address]=rrf(Register[address]);
@@ -1085,8 +1082,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							testLine=Register[currentLine
 									& (~seven)];
 							
@@ -1102,13 +1098,13 @@ public class SimulationGui {
 									Register[2]=Register[2]+2;
 									if((Register[0x81]&0b100000)==0)
 									{
-									if(Register[1]==255)
+									if(TMR0==255)
 									{
-										Register[1]=0;
+										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										Register[1]++;
+										TMR0++;
 									}
 								}
 							
@@ -1138,8 +1134,7 @@ public class SimulationGui {
 								address=address|0x80;
 							if(address==0)
 								address=Register[4];
-							if(address==1)
-								Register[1]=Register[1]-3;
+							
 							testLine=Register[currentLine
 									& (~seven)];
 							if(testLine+1>255)
@@ -1164,13 +1159,13 @@ public class SimulationGui {
 									Register[2]=Register[2]+2;
 									if((Register[0x81]&0b100000)==0)
 										{
-										if(Register[1]==255)
+										if(TMR0==255)
 										{
-											Register[1]=0;
+											TMR0=0;
 											Register[0x0b]=bsf(Register[0x0b],2);
 											}
 										else
-											Register[1]++;
+											TMR0++;
 										}
 								}
 
@@ -1187,8 +1182,7 @@ public class SimulationGui {
 									address=address|0x80;
 								if(address==0)
 									address=Register[4];
-								if(address==1)
-									Register[1]=Register[1]-3;
+								
 								
 								Register[address]=w;
 								Register[2]++;
@@ -1203,8 +1197,7 @@ public class SimulationGui {
 									address=address|0x80;
 								if(address==0)
 									address=Register[4];
-								if(address==1)
-									Register[1]=Register[1]-3;
+								
 								Register[address]=0;
 								//Z flag
 									Register[3]=bsf(Register[3],2);
@@ -1233,13 +1226,13 @@ public class SimulationGui {
 									j--;
 									if((Register[0x81]&0b100000)==0)
 									{
-									if(Register[1]==255)
+									if(TMR0==255)
 									{
-										Register[1]=0;
+										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										Register[1]++;
+										TMR0++;
 									}
 										
 									System.out.println(w);
@@ -1259,25 +1252,25 @@ public class SimulationGui {
 						}
 						if((Register[0x81]&0b100000)==0)
 						{
-						if(Register[1]==255)
+						if(TMR0==255)
 						{
-							Register[1]=0;
+							TMR0=0;
 							Register[0x0b]=bsf(Register[0x0b],2);
 							}
 						else
-							Register[1]++;
+							TMR0++;
 						}
 					}else { Register[2]++;
 					System.out.println(w);
 					if((Register[0x81]&0b100000)==0)
 					{
-					if(Register[1]==255)
+					if(TMR0==255)
 					{
-						Register[1]=0;
+						TMR0=0;
 						Register[0x0b]=bsf(Register[0x0b],2);
 						}
 					else
-						Register[1]++;
+						TMR0++;
 					}
 					}
 					//GUI
@@ -1300,7 +1293,12 @@ public class SimulationGui {
 					//registerTextArea.setText(Register.toString());
 					register="";
 					for(int aa=0;aa<256;aa++)
-						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+						{
+						if(Register[aa]<0 && aa==1)
+							register=register+Integer.toString(aa)+"  0\n";
+						else
+							register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+						}
 					
 					registerTextArea.setText(register);
 					//SFR
@@ -1326,7 +1324,12 @@ public class SimulationGui {
 					//GPR
 					register="";
 					for(int aa=12;aa<80;aa++)
-						register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+					{
+						if(Register[aa]<0 && aa==1)
+							register=register+Integer.toString(aa)+"  0\n";
+						else
+							register=register+Integer.toString(aa)+"  "+Integer.toString(Register[aa])+"\n";
+						}
 					
 					GPR.setText(register);
 					//end GPR
