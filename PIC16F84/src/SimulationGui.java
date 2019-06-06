@@ -109,6 +109,7 @@ public class SimulationGui {
 	//RP0 5 bit in statues register
 	public static int bank=0;
 	public static int PCLATH=0;
+	public static boolean pclChanged=false;
 
 	/**
 	 * Launch the application.
@@ -1072,7 +1073,9 @@ public class SimulationGui {
 				//end GUI
 				//program counter
 				if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
-					programCounter=Register[2]&0xff;
+					Register[2]=programCounter&0xff;
+					
+					
 				//PCLATH=Register[0xa]&0b11111;
 				//PCLATH=PCLATH<<8;
 				//programCounter=programCounter|PCLATH;
@@ -1190,7 +1193,7 @@ public class SimulationGui {
 						switch (currentLine & four) {
 						case 12288:
 							w=movlw(currentLine & (~six));
-							Register[2]++;
+							programCounter++;
 							System.out.println(w);
 							break;
 							//returnlw
@@ -1228,7 +1231,7 @@ public class SimulationGui {
 			
 			Register[address]=bsf(Register[address],b);
 			System.out.println(w);
-			Register[2]++;
+			programCounter++;
 			break;
 			case 0x1000:
 				//bcf
@@ -1242,7 +1245,7 @@ public class SimulationGui {
 				
 				Register[address]=bcf(Register[address],testLine);
 				System.out.println(w);
-				Register[2]++;
+				programCounter++;
 				break;
 
 			case 0x1800:
@@ -1260,7 +1263,7 @@ public class SimulationGui {
 				testLine2=testLine2>>testLine;
 				if(testLine2%2==0)
 					{
-						Register[2]=Register[2]+2;
+						programCounter=programCounter+2;
 						if((Register[0x81]&0b100000)==0)
 						{
 						if(TMR0==255)
@@ -1273,7 +1276,7 @@ public class SimulationGui {
 						}
 					}
 				else
-					Register[2]++;
+					programCounter++;
 
 				System.out.println(w);
 
@@ -1295,7 +1298,7 @@ public class SimulationGui {
 				testLine2=testLine2>>testLine;
 				if(testLine2%2==1)
 					{
-						Register[2]=Register[2]+2;
+						programCounter=programCounter+2;
 						if((Register[0x81]&0b100000)==0)
 						{
 						if(TMR0==255)
@@ -1308,7 +1311,7 @@ public class SimulationGui {
 						}
 					}
 				else
-					Register[2]++;
+					programCounter++;
 
 				System.out.println(w);
 
@@ -1331,7 +1334,7 @@ public class SimulationGui {
 					else
 						Register[3]=bcf(Register[3],2);
 					//end z flag
-					Register[2]++;
+					programCounter++;
 					System.out.println(w);
 					break;
 				case 15872:
@@ -1348,7 +1351,7 @@ public class SimulationGui {
 					else
 						Register[3]=bcf(Register[3],2);
 					//end z flag
-					Register[2]++;
+					programCounter++;
 					System.out.println(w);
 					break;
 				default:
@@ -1362,7 +1365,7 @@ public class SimulationGui {
 						else
 							Register[3]=bcf(Register[3],2);
 						//end z flag
-						Register[2]++;
+						programCounter++;
 						System.out.println(w);
 						break;
 					case 14336:
@@ -1373,7 +1376,7 @@ public class SimulationGui {
 						else
 							Register[3]=bcf(Register[3],2);
 						//end z flag
-						Register[2]++;
+						programCounter++;
 						System.out.println(w);
 						break;
 					case 14848:
@@ -1384,7 +1387,7 @@ public class SimulationGui {
 						else
 							Register[3]=bcf(Register[3],2);
 						//end z flag
-						Register[2]++;
+						programCounter++;
 						System.out.println(w);
 						break;
 					case 1792:
@@ -1419,15 +1422,16 @@ public class SimulationGui {
 							Register[address]=testLine;
 							if(address==2)
 							{
-								//programCounter=Register[2]&0xff;
+								programCounter=Register[2]&0xff;
 								PCLATH=Register[0xa]&0b11111;
 								PCLATH=PCLATH<<8;
 								programCounter=programCounter|PCLATH;
+								pclChanged=true;
 							}
 						}
 						else
 							w=testLine;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1452,7 +1456,7 @@ public class SimulationGui {
 
 						else
 							w=Register[address]&w;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1477,7 +1481,7 @@ public class SimulationGui {
 
 						else
 							w=(~Register[address])&0xff;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1508,7 +1512,7 @@ public class SimulationGui {
 							w=0xff;
 						else
 							Register[address]=0xff;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1538,7 +1542,7 @@ public class SimulationGui {
 							Register[address]=0;
 							Register[3]=bsf(Register[3],2);
 							}
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1562,7 +1566,7 @@ public class SimulationGui {
 
 						else
 							w=Register[address];
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1586,7 +1590,7 @@ public class SimulationGui {
 
 						else
 							w=Register[address] | w;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1622,7 +1626,7 @@ public class SimulationGui {
 							else
 								w = testLine;
 						
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1641,7 +1645,7 @@ public class SimulationGui {
 
 						else
 							w=swapf(Register[address]);
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1665,7 +1669,7 @@ public class SimulationGui {
 
 						else
 							w=Register[address]^w;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1702,7 +1706,7 @@ public class SimulationGui {
 
 						else
 							w = testLine2;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1735,7 +1739,7 @@ public class SimulationGui {
 
 						else
 							w = testLine2;
-						Register[2]++;
+						programCounter++;
 
 						System.out.println(w);
 						break;
@@ -1757,10 +1761,10 @@ public class SimulationGui {
 							testLine--;
 						
 						if (testLine!=0) 
-							Register[2]++;
+							programCounter++;
 						else
 							{
-								Register[2]=Register[2]+2;
+								programCounter=programCounter+2;
 								if((Register[0x81]&0b100000)==0)
 								{
 								if(TMR0==255)
@@ -1818,10 +1822,10 @@ public class SimulationGui {
 							w = testLine;
 
 						if (testLine!=0) 
-							Register[2]++;
+							programCounter++;
 						else
 							{
-								Register[2]=Register[2]+2;
+								programCounter=programCounter+2;
 								if((Register[0x81]&0b100000)==0)
 									{
 									if(TMR0==255)
@@ -1856,7 +1860,7 @@ public class SimulationGui {
 								PCLATH=PCLATH<<8;
 								programCounter=programCounter|PCLATH;
 							}
-							Register[2]++;
+							programCounter++;
 							System.out.println(w);
 							break;
 
@@ -1873,7 +1877,7 @@ public class SimulationGui {
 							//Z flag
 								Register[3]=bsf(Register[3],2);
 							//end Z flag
-							Register[2]++;
+							programCounter++;
 							System.out.println(w);
 							break;
 						case 256:
@@ -1882,7 +1886,7 @@ public class SimulationGui {
 							//Z flag
 							Register[3]=bsf(Register[3],2);
 							//end Z flag
-							Register[2]++;
+							programCounter++;
 							System.out.println(w);
 							break;
 						default:
@@ -1931,7 +1935,7 @@ public class SimulationGui {
 					else
 						TMR0++;
 					}
-				}else { Register[2]++;
+				}else { programCounter++;
 				System.out.println(w);
 				if((Register[0x81]&0b100000)==0)
 				{
@@ -3075,7 +3079,7 @@ public class SimulationGui {
 						//end GUI
 						//program counter
 						if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
-							programCounter=Register[2]&0xff;
+							Register[2]=programCounter&0xff;
 						//PCLATH=Register[0xa]&0b11111;
 						//PCLATH=PCLATH<<8;
 						//programCounter=programCounter|PCLATH;
@@ -3135,7 +3139,7 @@ public class SimulationGui {
 						//end of EEPROM
 						
 						//noop code check
-						while(Register[2]<value)
+						while(programCounter<value)
 						{
 
 							
@@ -3217,7 +3221,7 @@ public class SimulationGui {
 							//end GUI
 							//program counter
 							if((currentLine & three)!=8192 && (currentLine & four)!=10240 && (currentLine & four)!=0b11010000000000 &&currentLine!=0x0008)
-								programCounter=Register[2]&0xff;
+								Register[2]=programCounter&0xff;
 							//PCLATH=Register[0xa]&0b11111;
 							//PCLATH=PCLATH<<8;
 							//programCounter=programCounter|PCLATH;
@@ -3335,7 +3339,7 @@ public class SimulationGui {
 									switch (currentLine & four) {
 									case 12288:
 										w=movlw(currentLine & (~six));
-										Register[2]++;
+										programCounter++;
 										System.out.println(w);
 										break;
 										//returnlw
@@ -3373,7 +3377,7 @@ public class SimulationGui {
 						
 						Register[address]=bsf(Register[address],b);
 						System.out.println(w);
-						Register[2]++;
+						programCounter++;
 						break;
 						case 0x1000:
 							//bcf
@@ -3387,7 +3391,7 @@ public class SimulationGui {
 							
 							Register[address]=bcf(Register[address],testLine);
 							System.out.println(w);
-							Register[2]++;
+							programCounter++;
 							break;
 
 						case 0x1800:
@@ -3405,7 +3409,7 @@ public class SimulationGui {
 							testLine2=testLine2>>testLine;
 							if(testLine2%2==0)
 								{
-									Register[2]=Register[2]+2;
+									programCounter=programCounter+2;
 									if((Register[0x81]&0b100000)==0)
 									{
 									if(TMR0==255)
@@ -3418,7 +3422,7 @@ public class SimulationGui {
 									}
 								}
 							else
-								Register[2]++;
+								programCounter++;
 
 							System.out.println(w);
 
@@ -3440,7 +3444,7 @@ public class SimulationGui {
 							testLine2=testLine2>>testLine;
 							if(testLine2%2==1)
 								{
-									Register[2]=Register[2]+2;
+									programCounter=programCounter+2;
 									if((Register[0x81]&0b100000)==0)
 									{
 									if(TMR0==255)
@@ -3453,7 +3457,7 @@ public class SimulationGui {
 									}
 								}
 							else
-								Register[2]++;
+								programCounter++;
 
 							System.out.println(w);
 
@@ -3476,7 +3480,7 @@ public class SimulationGui {
 								else
 									Register[3]=bcf(Register[3],2);
 								//end z flag
-								Register[2]++;
+								programCounter++;
 								System.out.println(w);
 								break;
 							case 15872:
@@ -3493,7 +3497,7 @@ public class SimulationGui {
 								else
 									Register[3]=bcf(Register[3],2);
 								//end z flag
-								Register[2]++;
+								programCounter++;
 								System.out.println(w);
 								break;
 							default:
@@ -3507,7 +3511,7 @@ public class SimulationGui {
 									else
 										Register[3]=bcf(Register[3],2);
 									//end z flag
-									Register[2]++;
+									programCounter++;
 									System.out.println(w);
 									break;
 								case 14336:
@@ -3518,7 +3522,7 @@ public class SimulationGui {
 									else
 										Register[3]=bcf(Register[3],2);
 									//end z flag
-									Register[2]++;
+									programCounter++;
 									System.out.println(w);
 									break;
 								case 14848:
@@ -3529,7 +3533,7 @@ public class SimulationGui {
 									else
 										Register[3]=bcf(Register[3],2);
 									//end z flag
-									Register[2]++;
+									programCounter++;
 									System.out.println(w);
 									break;
 								case 1792:
@@ -3564,15 +3568,16 @@ public class SimulationGui {
 										Register[address]=testLine;
 										if(address==2)
 										{
-											//programCounter=Register[2]&0xff;
+											programCounter=Register[2]&0xff;
 											PCLATH=Register[0xa]&0b11111;
 											PCLATH=PCLATH<<8;
 											programCounter=programCounter|PCLATH;
+											pclChanged=true;
 										}
 									}
 									else
 										w=testLine;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3597,7 +3602,7 @@ public class SimulationGui {
 
 									else
 										w=Register[address]&w;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3622,7 +3627,7 @@ public class SimulationGui {
 
 									else
 										w=(~Register[address])&0xff;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3653,7 +3658,7 @@ public class SimulationGui {
 										w=0xff;
 									else
 										Register[address]=0xff;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3683,7 +3688,7 @@ public class SimulationGui {
 										Register[address]=0;
 										Register[3]=bsf(Register[3],2);
 										}
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3707,7 +3712,7 @@ public class SimulationGui {
 
 									else
 										w=Register[address];
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3731,7 +3736,7 @@ public class SimulationGui {
 
 									else
 										w=Register[address] | w;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3767,7 +3772,7 @@ public class SimulationGui {
 										else
 											w = testLine;
 									
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3786,7 +3791,7 @@ public class SimulationGui {
 
 									else
 										w=swapf(Register[address]);
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3810,7 +3815,7 @@ public class SimulationGui {
 
 									else
 										w=Register[address]^w;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3847,7 +3852,7 @@ public class SimulationGui {
 
 									else
 										w = testLine2;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3880,7 +3885,7 @@ public class SimulationGui {
 
 									else
 										w = testLine2;
-									Register[2]++;
+									programCounter++;
 
 									System.out.println(w);
 									break;
@@ -3902,10 +3907,10 @@ public class SimulationGui {
 										testLine--;
 									
 									if (testLine!=0) 
-										Register[2]++;
+										programCounter++;
 									else
 										{
-											Register[2]=Register[2]+2;
+											programCounter=programCounter+2;
 											if((Register[0x81]&0b100000)==0)
 											{
 											if(TMR0==255)
@@ -3963,10 +3968,10 @@ public class SimulationGui {
 										w = testLine;
 
 									if (testLine!=0) 
-										Register[2]++;
+										programCounter++;
 									else
 										{
-											Register[2]=Register[2]+2;
+											programCounter=programCounter+2;
 											if((Register[0x81]&0b100000)==0)
 												{
 												if(TMR0==255)
@@ -4001,7 +4006,7 @@ public class SimulationGui {
 											PCLATH=PCLATH<<8;
 											programCounter=programCounter|PCLATH;
 										}
-										Register[2]++;
+										programCounter++;
 										System.out.println(w);
 										break;
 
@@ -4018,7 +4023,7 @@ public class SimulationGui {
 										//Z flag
 											Register[3]=bsf(Register[3],2);
 										//end Z flag
-										Register[2]++;
+										programCounter++;
 										System.out.println(w);
 										break;
 									case 256:
@@ -4027,7 +4032,7 @@ public class SimulationGui {
 										//Z flag
 										Register[3]=bsf(Register[3],2);
 										//end Z flag
-										Register[2]++;
+										programCounter++;
 										System.out.println(w);
 										break;
 									default:
@@ -4076,7 +4081,7 @@ public class SimulationGui {
 								else
 									TMR0++;
 								}
-							}else { Register[2]++;
+							}else { programCounter++;
 							System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
 							{
