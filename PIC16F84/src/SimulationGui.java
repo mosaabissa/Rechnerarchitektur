@@ -1082,7 +1082,7 @@ public class SimulationGui {
 				//end program counter
 				bank=Register[3]&0b100000;
 				//timer interrupt
-				//if(TMR0==255 && Register[1]==0)
+				//if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)) && Register[1]==0)
 				if(Register[1]==255 && TMR0==0 && (Register[0x0b]&0xa0)==0xa0)	
 				{
 					//T0IF (bit 2 from INTCON) is set
@@ -1159,13 +1159,13 @@ public class SimulationGui {
 						System.out.println(w);
 						if((Register[0x81]&0b100000)==0)
 						{
-						if(TMR0==255)
+						if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 							{
 							TMR0=0;
 							Register[0x0b]=bsf(Register[0x0b],2);
 							}
 						else
-							TMR0++;
+							TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 						}
 						break;
 					case 10240:
@@ -1178,13 +1178,13 @@ public class SimulationGui {
 						//System.out.println(w);
 						if((Register[0x81]&0b100000)==0)
 						{
-						if(TMR0==255)
+						if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 						{
 							TMR0=0;
 							Register[0x0b]=bsf(Register[0x0b],2);
 							}
 						else
-							TMR0++;
+							TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 						}
 						break;
 
@@ -1208,13 +1208,13 @@ public class SimulationGui {
 							System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
 							{
-							if(TMR0==255)
+							if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 							{
 								TMR0=0;
 								Register[0x0b]=bsf(Register[0x0b],2);
 								}
 							else
-								TMR0++;
+								TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 							}
 							break;
 						case 0x1400:
@@ -1266,13 +1266,13 @@ public class SimulationGui {
 						programCounter=programCounter+2;
 						if((Register[0x81]&0b100000)==0)
 						{
-						if(TMR0==255)
+						if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 						{
 							TMR0=0;
 							Register[0x0b]=bsf(Register[0x0b],2);
 							}
 						else
-							TMR0++;
+							TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 						}
 					}
 				else
@@ -1301,13 +1301,13 @@ public class SimulationGui {
 						programCounter=programCounter+2;
 						if((Register[0x81]&0b100000)==0)
 						{
-						if(TMR0==255)
+						if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 						{
 							TMR0=0;
 							Register[0x0b]=bsf(Register[0x0b],2);
 							}
 						else
-							TMR0++;
+							TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 						}
 					}
 				else
@@ -1767,13 +1767,13 @@ public class SimulationGui {
 								programCounter=programCounter+2;
 								if((Register[0x81]&0b100000)==0)
 								{
-								if(TMR0==255)
+								if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 								{
 									TMR0=0;
 									Register[0x0b]=bsf(Register[0x0b],2);
 									}
 								else
-									TMR0++;
+									TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 								}
 							}
 						
@@ -1828,13 +1828,13 @@ public class SimulationGui {
 								programCounter=programCounter+2;
 								if((Register[0x81]&0b100000)==0)
 									{
-									if(TMR0==255)
+									if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 									{
 										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										TMR0++;
+										TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 									}
 							}
 
@@ -1901,13 +1901,13 @@ public class SimulationGui {
 								j--;
 								if((Register[0x81]&0b100000)==0)
 								{
-								if(TMR0==255)
+								if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 								{
 									TMR0=0;
 									Register[0x0b]=bsf(Register[0x0b],2);
 									}
 								else
-									TMR0++;
+									TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 								}
 									
 								System.out.println(w);
@@ -1927,25 +1927,25 @@ public class SimulationGui {
 					}
 					if((Register[0x81]&0b100000)==0)
 					{
-					if(TMR0==255)
+					if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 					{
 						TMR0=0;
 						Register[0x0b]=bsf(Register[0x0b],2);
 						}
 					else
-						TMR0++;
+						TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 					}
 				}else { programCounter++;
 				System.out.println(w);
 				if((Register[0x81]&0b100000)==0)
 				{
-				if(TMR0==255)
+				if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 				{
 					TMR0=0;
 					Register[0x0b]=bsf(Register[0x0b],2);
 					}
 				else
-					TMR0++;
+					TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 				}
 				}
 				//GUI
@@ -3086,7 +3086,7 @@ public class SimulationGui {
 						//end program counter
 						bank=Register[3]&0b100000;
 						//timer interrupt
-						//if(TMR0==255 && Register[1]==0)
+						//if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)) && Register[1]==0)
 						if(Register[1]==255 && TMR0==0 && (Register[0x0b]&0xa0)==0xa0)	
 						{
 							//T0IF (bit 2 from INTCON) is set
@@ -3228,7 +3228,7 @@ public class SimulationGui {
 							//end program counter
 							bank=Register[3]&0b100000;
 							//timer interrupt
-							//if(TMR0==255 && Register[1]==0)
+							//if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)) && Register[1]==0)
 							if(Register[1]==255 && TMR0==0 && (Register[0x0b]&0xa0)==0xa0)	
 							{
 								//T0IF (bit 2 from INTCON) is set
@@ -3305,13 +3305,13 @@ public class SimulationGui {
 									System.out.println(w);
 									if((Register[0x81]&0b100000)==0)
 									{
-									if(TMR0==255)
+									if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 										{
 										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										TMR0++;
+										TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 									}
 									break;
 								case 10240:
@@ -3324,13 +3324,13 @@ public class SimulationGui {
 									//System.out.println(w);
 									if((Register[0x81]&0b100000)==0)
 									{
-									if(TMR0==255)
+									if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 									{
 										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										TMR0++;
+										TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 									}
 									break;
 
@@ -3354,13 +3354,13 @@ public class SimulationGui {
 										System.out.println(w);
 										if((Register[0x81]&0b100000)==0)
 										{
-										if(TMR0==255)
+										if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 										{
 											TMR0=0;
 											Register[0x0b]=bsf(Register[0x0b],2);
 											}
 										else
-											TMR0++;
+											TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 										}
 										break;
 									case 0x1400:
@@ -3412,13 +3412,13 @@ public class SimulationGui {
 									programCounter=programCounter+2;
 									if((Register[0x81]&0b100000)==0)
 									{
-									if(TMR0==255)
+									if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 									{
 										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										TMR0++;
+										TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 									}
 								}
 							else
@@ -3447,13 +3447,13 @@ public class SimulationGui {
 									programCounter=programCounter+2;
 									if((Register[0x81]&0b100000)==0)
 									{
-									if(TMR0==255)
+									if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 									{
 										TMR0=0;
 										Register[0x0b]=bsf(Register[0x0b],2);
 										}
 									else
-										TMR0++;
+										TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 									}
 								}
 							else
@@ -3913,13 +3913,13 @@ public class SimulationGui {
 											programCounter=programCounter+2;
 											if((Register[0x81]&0b100000)==0)
 											{
-											if(TMR0==255)
+											if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 											{
 												TMR0=0;
 												Register[0x0b]=bsf(Register[0x0b],2);
 												}
 											else
-												TMR0++;
+												TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 											}
 										}
 									
@@ -3974,13 +3974,13 @@ public class SimulationGui {
 											programCounter=programCounter+2;
 											if((Register[0x81]&0b100000)==0)
 												{
-												if(TMR0==255)
+												if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 												{
 													TMR0=0;
 													Register[0x0b]=bsf(Register[0x0b],2);
 													}
 												else
-													TMR0++;
+													TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 												}
 										}
 
@@ -4047,13 +4047,13 @@ public class SimulationGui {
 											j--;
 											if((Register[0x81]&0b100000)==0)
 											{
-											if(TMR0==255)
+											if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 											{
 												TMR0=0;
 												Register[0x0b]=bsf(Register[0x0b],2);
 												}
 											else
-												TMR0++;
+												TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 											}
 												
 											System.out.println(w);
@@ -4073,25 +4073,25 @@ public class SimulationGui {
 								}
 								if((Register[0x81]&0b100000)==0)
 								{
-								if(TMR0==255)
+								if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 								{
 									TMR0=0;
 									Register[0x0b]=bsf(Register[0x0b],2);
 									}
 								else
-									TMR0++;
+									TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 								}
 							}else { programCounter++;
 							System.out.println(w);
 							if((Register[0x81]&0b100000)==0)
 							{
-							if(TMR0==255)
+							if(TMR0==255-Math.pow(2,-1*((Register[0x81]&0b111)+1)))
 							{
 								TMR0=0;
 								Register[0x0b]=bsf(Register[0x0b],2);
 								}
 							else
-								TMR0++;
+								TMR0=TMR0+Math.pow(2,-1*((Register[0x81]&0b111)+1));
 							}
 							}
 							//GUI
